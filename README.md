@@ -1,1 +1,1 @@
-# RU_Laundry_System_DE_2026
+# DE_Project_2026
