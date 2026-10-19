@@ -1,1 +1,1 @@
-# RU_Laundry_System_AP_2026
+# RU_Laundry_System_DE_2026
