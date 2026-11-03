@@ -1,0 +1,25 @@
+{
+  "team_number": "",
+  "group_lead": {
+    "name": "Mudit Agrawal",
+    "enrollment_no": "2501010283",
+    "github": "muditagrawal2007"
+  },
+  "members": [
+    {
+      "name": "Dhruv Chhabra",
+      "enrollment_no": "2501010143",
+      "github": "dhruvchhabra29"
+    },
+    {
+      "name": "Krishna Agarwal",
+      "enrollment_no": "2501010231",
+      "github": "anhsirkkrishna"
+    },
+    {
+      "name": "Shweta Sharma",
+      "enrollment_no": "2501010448",
+      "github": "Shweta-Sharma-sh"
+    }
+  ],
+  "laptop_used_for_benchmarks": "mackbook pro m4"}
