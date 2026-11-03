@@ -22,7 +22,7 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| To confirm | Mudit Agrawal | 2501010283 | Pending |
+| To confirm | Mudit Agrawal | 2501010283 | muditagrawal2007 |
 | To confirm | Dhruv Chhabra | Pending | dhruvchhabra29 |
 | To confirm | Shweta Sharma | Pending | Pending |
 | To confirm | Krishna Agarwal | Pending | Pending |
