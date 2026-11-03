@@ -22,10 +22,10 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| To confirm | Mudit Agrawal | Pending | Pending |
-| To confirm | Dhruv Chhabra | Pending | dhruvchhabra29 |
+| To confirm | Mudit Agrawal | 2501010283 | muditagrawal2007 |
+| To confirm | Dhruv Chhabra | 2501010143 | dhruvchhabra29 |
 | To confirm | Shweta Sharma | Pending | Pending |
-| To confirm | Krishna Agarwal | Pending | Pending |
+| To confirm | Krishna Agarwal | Pending | anhsirkkrishna |
 
 **Team No.:** T0033 · **Section:** To confirm · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
 
