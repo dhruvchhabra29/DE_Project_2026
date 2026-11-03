@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Blinkit 10-Minute Grocery Delivery Database: DBMS Project
 
 **Course:** Database Management Systems · **Year:** B.Tech 2nd year · **Team size:** 4
@@ -744,3 +745,6 @@ WHERE store_id = 43 AND quantity_on_hand <= reorder_level;
 DELETE FROM inventory_movements
 WHERE moved_at < '2026-01-01';
 ```
+=======
+# DE_Project_2026
+>>>>>>> 0d35a53da2f88d183863c61d1053bb31812e9602
