@@ -22,12 +22,14 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| Group Lead | | | |
-| Member 2 | | | |
-| Member 3 | | | |
-| Member 4 | | | |
+| To confirm | Mudit Agrawal | Pending | Pending |
+| To confirm | Dhruv Chhabra | Pending | dhruvchhabra29 |
+| To confirm | Shweta Sharma | Pending | Pending |
+| To confirm | Krishna Agarwal | Pending | Pending |
 
-**Team No.:** ____ · **Section:** ____ · **Repository URL:** ____
+**Team No.:** T0033 · **Section:** To confirm · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
+
+**Database:** PostgreSQL 16 · **Benchmark laptop:** MacBook Pro M4
 
 ---
 
