@@ -238,3 +238,72 @@ CREATE TABLE orders (
     -- PACKING doesn't force packed_at: packing may have started but not finished.
     -- W03 handles exactly that case with coalesce(packed_at, ...).
 );
+
+
+-- ---------------------------------------------------------------------
+-- 9. order_items: one row per product inside an order (675,000 rows, 2-7 lines per order)
+-- ---------------------------------------------------------------------
+CREATE TABLE order_items (
+    order_id               INTEGER        NOT NULL
+                           REFERENCES orders (order_id) ON DELETE CASCADE,       -- an item is part of its order: delete the order, its lines go too
+    product_id             INTEGER        NOT NULL
+                           REFERENCES products (product_id) ON DELETE RESTRICT,  -- can't delete a product that was sold
+    quantity_ordered       SMALLINT       NOT NULL,          -- 1-3 in the data
+    quantity_delivered     SMALLINT       NOT NULL,          -- can be less than ordered if the item ran out
+    unit_price             NUMERIC(10,2)  NOT NULL,          -- price at the time of the order (a copy, because store prices change later)
+    substitute_product_id  INTEGER        NULL               -- blank on 660,000 of 675,000 lines: no replacement given
+                           REFERENCES products (product_id) ON DELETE RESTRICT,
+
+    -- COMPOSITE primary key: a product appears at most once per order
+    PRIMARY KEY (order_id, product_id),
+
+    CONSTRAINT chk_item_qty_ordered     CHECK (quantity_ordered > 0),
+    -- you can't deliver more than was ordered, or fewer than zero
+    CONSTRAINT chk_item_qty_delivered   CHECK (quantity_delivered BETWEEN 0 AND quantity_ordered),
+    CONSTRAINT chk_item_price_positive  CHECK (unit_price > 0),
+    -- a substitute must be a DIFFERENT product (NULL passes)
+    CONSTRAINT chk_item_substitute_differs CHECK (substitute_product_id <> product_id),
+    -- a substitute is only given when the original was delivered short
+    CONSTRAINT chk_item_substitute_only_if_short CHECK (substitute_product_id IS NULL OR quantity_delivered < quantity_ordered)
+);
+
+
+-- ---------------------------------------------------------------------
+-- 10. inventory_movements: every change to a store's stock (90,000 rows)
+--     RESTOCK adds units; DAMAGE, EXPIRY and ADJUSTMENT remove them in the data.
+-- ---------------------------------------------------------------------
+CREATE TABLE inventory_movements (
+    movement_id    INTEGER      PRIMARY KEY,
+    store_id       INTEGER      NOT NULL,
+    product_id     INTEGER      NOT NULL,
+    movement_type  VARCHAR(12)  NOT NULL,
+    quantity       INTEGER      NOT NULL,                -- signed: + units in, - units out
+    moved_at       TIMESTAMPTZ  NOT NULL,
+
+    -- A movement changes ONE stock row, so it points to the inventory row
+    -- (store_id, product_id) with a COMPOSITE foreign key, not to stores and products separately.
+    -- RESTRICT: stock history is audit data, so a stock row with movements can't be silently deleted.
+    CONSTRAINT fk_movement_inventory FOREIGN KEY (store_id, product_id)
+        REFERENCES store_inventory (store_id, product_id) ON DELETE RESTRICT,
+
+    CONSTRAINT chk_movement_type      CHECK (movement_type IN ('RESTOCK', 'DAMAGE', 'EXPIRY', 'ADJUSTMENT')),
+    -- a movement of 0 units means nothing happened
+    CONSTRAINT chk_movement_nonzero   CHECK (quantity <> 0),
+    -- the sign must match the type: restock adds (+), damage and expiry remove (-).
+    -- An ADJUSTMENT (stock-count correction) may go either way.
+    CONSTRAINT chk_movement_sign CHECK (
+           (movement_type = 'RESTOCK'               AND quantity > 0)
+        OR (movement_type IN ('DAMAGE', 'EXPIRY')   AND quantity < 0)
+        OR (movement_type = 'ADJUSTMENT')
+    )
+);
+
+-- =====================================================================
+-- Indexes that exist after this file (all automatic, from PRIMARY KEY / UNIQUE):
+--   cities_pkey, cities_city_name_key, categories_pkey, categories_category_name_key,
+--   dark_stores_pkey, dark_stores_store_code_key, products_pkey, products_sku_key,
+--   customers_pkey, customers_phone_key, customers_email_key, riders_pkey, riders_phone_key,
+--   store_inventory_pkey (store_id, product_id), orders_pkey,
+--   order_items_pkey (order_id, product_id), inventory_movements_pkey
+-- No other index is created in Phase 2, so the Phase 3 baseline is untuned.
+-- =====================================================================

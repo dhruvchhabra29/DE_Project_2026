@@ -16,28 +16,38 @@
 SET search_path TO blinkit;
 
 -- 1-4: tables with no parent, or whose parents are loaded just above
-\copy cities       FROM 'seed_data/cities.csv'       WITH (FORMAT csv, HEADER true)
-\copy categories   FROM 'seed_data/categories.csv'   WITH (FORMAT csv, HEADER true)
-\copy dark_stores  FROM 'seed_data/dark_stores.csv'  WITH (FORMAT csv, HEADER true)
-\copy products     FROM 'seed_data/products.csv'     WITH (FORMAT csv, HEADER true)
+\copy cities               FROM 'seed_data/cities.csv'               WITH (FORMAT csv, HEADER true)
+\copy categories           FROM 'seed_data/categories.csv'           WITH (FORMAT csv, HEADER true)
+\copy dark_stores          FROM 'seed_data/dark_stores.csv'          WITH (FORMAT csv, HEADER true)
+\copy products             FROM 'seed_data/products.csv'             WITH (FORMAT csv, HEADER true)
 
 -- 5-7: need cities / dark_stores / products to exist first
-\copy customers        FROM 'seed_data/customers.csv'        WITH (FORMAT csv, HEADER true)
-\copy riders           FROM 'seed_data/riders.csv'           WITH (FORMAT csv, HEADER true)
-\copy store_inventory  FROM 'seed_data/store_inventory.csv'  WITH (FORMAT csv, HEADER true)
+\copy customers            FROM 'seed_data/customers.csv'            WITH (FORMAT csv, HEADER true)
+\copy riders               FROM 'seed_data/riders.csv'               WITH (FORMAT csv, HEADER true)
+\copy store_inventory      FROM 'seed_data/store_inventory.csv'      WITH (FORMAT csv, HEADER true)
 
 -- 8: orders needs customers, dark_stores and riders
-\copy orders           FROM 'seed_data/orders.csv'           WITH (FORMAT csv, HEADER true)
+\copy orders               FROM 'seed_data/orders.csv'               WITH (FORMAT csv, HEADER true)
+
+-- 9-10: order_items needs orders + products; movements need store_inventory
+\copy order_items          FROM 'seed_data/order_items.csv'          WITH (FORMAT csv, HEADER true)
+\copy inventory_movements  FROM 'seed_data/inventory_movements.csv'  WITH (FORMAT csv, HEADER true)
 
 -- Refresh the planner's statistics, so the query plans in Phase 3 are realistic
 ANALYZE;
 
--- Row-count check: the "expected" column is the table in the README
-SELECT 'cities'      AS table_name, count(*) AS loaded, 10   AS expected FROM cities
-UNION ALL SELECT 'categories',  count(*), 12   FROM categories
-UNION ALL SELECT 'dark_stores', count(*), 120  FROM dark_stores
-UNION ALL SELECT 'products',    count(*), 1500 FROM products
-UNION ALL SELECT 'customers',   count(*), 40000  FROM customers
-UNION ALL SELECT 'riders',      count(*), 1800   FROM riders
-UNION ALL SELECT 'store_inventory', count(*), 126000 FROM store_inventory
-UNION ALL SELECT 'orders',      count(*), 150000 FROM orders;
+-- Row-count check: "expected" is the table in the README; ok must be true on every line
+SELECT n, table_name, loaded, expected, loaded = expected AS ok
+FROM (
+              SELECT 1 AS n, 'cities' AS table_name, count(*) AS loaded, 10 AS expected FROM cities
+    UNION ALL SELECT 2,  'categories',          count(*), 12      FROM categories
+    UNION ALL SELECT 3,  'dark_stores',         count(*), 120     FROM dark_stores
+    UNION ALL SELECT 4,  'products',            count(*), 1500    FROM products
+    UNION ALL SELECT 5,  'customers',           count(*), 40000   FROM customers
+    UNION ALL SELECT 6,  'riders',              count(*), 1800    FROM riders
+    UNION ALL SELECT 7,  'store_inventory',     count(*), 126000  FROM store_inventory
+    UNION ALL SELECT 8,  'orders',              count(*), 150000  FROM orders
+    UNION ALL SELECT 9,  'order_items',         count(*), 675000  FROM order_items
+    UNION ALL SELECT 10, 'inventory_movements', count(*), 90000   FROM inventory_movements
+) t
+ORDER BY n;
