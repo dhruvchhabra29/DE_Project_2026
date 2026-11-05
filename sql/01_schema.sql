@@ -1,0 +1,108 @@
+-- =====================================================================
+-- Blinkit DBMS Project · Team T0033
+-- sql/01_schema.sql : creates every table, with keys and constraints only
+--
+-- Run on an empty database:
+--   psql -d blinkit_seed -v ON_ERROR_STOP=1 -f sql/01_schema.sql
+--
+-- Rules we follow (README Phase 2):
+--   * Every table lives in the schema "blinkit".
+--   * Table and column names are exactly the CSV file names and headers.
+--   * Only PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL and CHECK.
+--     No other index yet. PostgreSQL makes an index automatically for each
+--     PRIMARY KEY and UNIQUE constraint, and that is allowed.
+--   * Every constraint below accepts 100% of the seed data.
+--
+-- Data-type choices used everywhere:
+--   ids            INTEGER        whole numbers. order_id grows to 90,000,001 in W01, still far below the 2.1 billion limit
+--   money          NUMERIC(10,2)  exact decimals (no float rounding errors on rupees)
+--   date + time    TIMESTAMPTZ    the CSVs carry a time zone (+05:30), so we keep it
+--   date only      DATE
+--   yes / no       BOOLEAN        the CSVs use t / f
+--   codes, phones  VARCHAR(n)     text with a format CHECK. Phones are text: no maths, and they can start with 0 or +
+--
+-- ON DELETE rules used everywhere:
+--   RESTRICT  for history (you cannot delete a customer, store, product or rider that is used by an order)
+--   CASCADE   only for "part-of" rows (an order's items die with the order, a store's stock rows die with the store)
+-- =====================================================================
+
+DROP SCHEMA IF EXISTS blinkit CASCADE;   -- start clean, so this file can be re-run any time
+CREATE SCHEMA blinkit;
+SET search_path TO blinkit;
+
+-- The queries compare TIMESTAMPTZ columns with plain dates such as '2026-06-01'.
+-- PostgreSQL reads such a date in the session's time zone, so we pin this database
+-- to Indian time. "June 2026" then means June in IST on every teammate's laptop.
+DO $$
+BEGIN
+    EXECUTE format('ALTER DATABASE %I SET timezone TO %L', current_database(), 'Asia/Kolkata');
+END $$;
+SET timezone TO 'Asia/Kolkata';
+
+
+-- ---------------------------------------------------------------------
+-- 1. cities: one row per city (10 rows)
+-- ---------------------------------------------------------------------
+CREATE TABLE cities (
+    city_id    INTEGER      PRIMARY KEY,                 -- 1..10, unique id of the city
+    city_name  VARCHAR(50)  NOT NULL UNIQUE,             -- "Bengaluru": two cities can't share a name
+    state      VARCHAR(50)  NOT NULL                     -- "Karnataka": many cities can share a state
+);
+
+
+-- ---------------------------------------------------------------------
+-- 2. categories: product categories such as Dairy, Snacks (12 rows)
+-- ---------------------------------------------------------------------
+CREATE TABLE categories (
+    category_id    INTEGER      PRIMARY KEY,             -- 1..12
+    category_name  VARCHAR(50)  NOT NULL UNIQUE,         -- the queries look up categories by name (R02, R19)
+    is_perishable  BOOLEAN      NOT NULL                 -- t = goes bad quickly (Dairy, Bakery...)
+);
+
+
+-- ---------------------------------------------------------------------
+-- 3. dark_stores: the small warehouses that serve orders (120 rows)
+-- ---------------------------------------------------------------------
+CREATE TABLE dark_stores (
+    store_id          INTEGER       PRIMARY KEY,
+    store_code        VARCHAR(10)   NOT NULL UNIQUE,     -- e.g. MUM-AND-11: a second, human-readable key
+    city_id           INTEGER       NOT NULL
+                      REFERENCES cities (city_id) ON DELETE RESTRICT,   -- can't delete a city that still has stores
+    latitude          NUMERIC(9,6)  NOT NULL,            -- 6 decimals in the CSV (about 10 cm accuracy)
+    longitude         NUMERIC(9,6)  NOT NULL,
+    opened_on         DATE          NOT NULL,
+    is_active         BOOLEAN       NOT NULL DEFAULT TRUE,   -- 2 stores (51, 74) are closed
+    max_daily_orders  INTEGER       NOT NULL,            -- capacity: 1500 / 2000 / 2500 / 3000
+
+    -- CITY-AREA-NUMBER, e.g. MUM-AND-11 (3 capital letters, dash, 3 capital letters, dash, 2 digits)
+    CONSTRAINT chk_store_code_format   CHECK (store_code ~ '^[A-Z]{3}-[A-Z]{3}-[0-9]{2}$'),
+    -- every store is in India: latitude about 6..37 N, longitude about 68..98 E
+    CONSTRAINT chk_store_latitude      CHECK (latitude  BETWEEN 6 AND 37),
+    CONSTRAINT chk_store_longitude     CHECK (longitude BETWEEN 68 AND 98),
+    -- a store must be able to take at least one order a day
+    CONSTRAINT chk_store_capacity      CHECK (max_daily_orders > 0)
+);
+
+
+-- ---------------------------------------------------------------------
+-- 4. products: the catalogue (1,500 rows)
+-- ---------------------------------------------------------------------
+CREATE TABLE products (
+    product_id       INTEGER        PRIMARY KEY,
+    sku              VARCHAR(10)    NOT NULL UNIQUE,     -- barcode id scanned in the warehouse (R23)
+    product_name     VARCHAR(100)   NOT NULL,            -- NOT unique: the same name appears ~21 times with different SKUs
+    brand            VARCHAR(50)    NOT NULL,
+    category_id      INTEGER        NOT NULL
+                     REFERENCES categories (category_id) ON DELETE RESTRICT,  -- can't delete a category that has products
+    pack_size        VARCHAR(20)    NOT NULL,            -- free text such as "1 kg", "4 x 100 g", "12 pcs"
+    mrp              NUMERIC(10,2)  NOT NULL,            -- maximum retail price in rupees
+    shelf_life_days  SMALLINT       NULL,                -- blank (NULL) for non-perishables such as detergent
+    is_active        BOOLEAN        NOT NULL DEFAULT TRUE,   -- 37 products are delisted
+
+    -- SKU = "BK" + 8 digits, e.g. BK10007919
+    CONSTRAINT chk_product_sku_format  CHECK (sku ~ '^BK[0-9]{8}$'),
+    -- a price must be positive
+    CONSTRAINT chk_product_mrp         CHECK (mrp > 0),
+    -- if a shelf life is given, it must be at least 1 day (NULL is allowed and passes)
+    CONSTRAINT chk_product_shelf_life  CHECK (shelf_life_days > 0)
+);
