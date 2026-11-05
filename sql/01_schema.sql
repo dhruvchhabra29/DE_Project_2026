@@ -170,3 +170,71 @@ CREATE TABLE store_inventory (
     CONSTRAINT chk_inventory_reorder_nonneg  CHECK (reorder_level >= 0),
     CONSTRAINT chk_inventory_price_positive  CHECK (selling_price > 0)
 );
+
+
+-- ---------------------------------------------------------------------
+-- 8. orders: one row per customer order (150,000 rows, 1 Jan 2025 - 30 Jun 2026)
+--
+-- Life of an order:   PLACED -> PACKING -> OUT_FOR_DELIVERY -> DELIVERED
+--                     (or CANCELLED at any point before pickup)
+-- The time columns fill in as the order moves forward, so blanks are expected:
+--   status             rider_id  packed_at  picked_up_at  delivered_at
+--   PLACED             -         -          -             -
+--   PACKING            -         yes        -             -
+--   OUT_FOR_DELIVERY   yes       yes        yes           -
+--   DELIVERED          yes       yes        yes           yes
+--   CANCELLED          -         maybe      -             -      (cancelled before or after packing)
+-- ---------------------------------------------------------------------
+CREATE TABLE orders (
+    order_id          INTEGER        PRIMARY KEY,
+    customer_id       INTEGER        NOT NULL
+                      REFERENCES customers (customer_id) ON DELETE RESTRICT,  -- keep order history: can't delete a customer with orders
+    store_id          INTEGER        NOT NULL
+                      REFERENCES dark_stores (store_id) ON DELETE RESTRICT,
+    rider_id          INTEGER        NULL                                       -- blank until a rider is assigned
+                      REFERENCES riders (rider_id) ON DELETE RESTRICT,         -- RESTRICT, not SET NULL: a delivered order must keep its rider
+    placed_at         TIMESTAMPTZ    NOT NULL,
+    packed_at         TIMESTAMPTZ    NULL,
+    picked_up_at      TIMESTAMPTZ    NULL,
+    delivered_at      TIMESTAMPTZ    NULL,
+    promised_minutes  SMALLINT       NOT NULL DEFAULT 10,   -- the 10-minute promise. W01 does not send it, so DEFAULT fills it in
+    subtotal          NUMERIC(10,2)  NOT NULL,              -- = sum(quantity_delivered x unit_price) of the order's items
+    delivery_fee      NUMERIC(10,2)  NOT NULL DEFAULT 0,
+    handling_fee      NUMERIC(10,2)  NOT NULL DEFAULT 0,
+    small_cart_fee    NUMERIC(10,2)  NOT NULL DEFAULT 0,    -- always 0 in the seed data (see the design doc)
+    total_amount      NUMERIC(10,2)  NOT NULL,              -- what the customer pays
+    payment_method    VARCHAR(10)    NOT NULL,
+    status            VARCHAR(20)    NOT NULL DEFAULT 'PLACED',
+
+    -- allowed values (all found in the data)
+    CONSTRAINT chk_order_payment_method  CHECK (payment_method IN ('UPI', 'CARD', 'COD', 'WALLET')),
+    CONSTRAINT chk_order_status          CHECK (status IN ('PLACED', 'PACKING', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED')),
+    CONSTRAINT chk_order_promised        CHECK (promised_minutes > 0),
+
+    -- money can't be negative
+    CONSTRAINT chk_order_money_nonneg    CHECK (subtotal >= 0 AND delivery_fee >= 0 AND handling_fee >= 0 AND small_cart_fee >= 0),
+    -- how the bill is built: total = subtotal + all fees (true for all 150,000 rows)
+    CONSTRAINT chk_order_total           CHECK (total_amount = subtotal + delivery_fee + handling_fee + small_cart_fee),
+    -- fee rules found in the data (update these if Blinkit changes its pricing):
+    --   delivery fee Rs 25 when the subtotal is below Rs 199, otherwise free
+    CONSTRAINT chk_order_delivery_fee    CHECK (delivery_fee = CASE WHEN subtotal < 199 THEN 25 ELSE 0 END),
+    --   handling fee Rs 6 when the subtotal is below Rs 500, otherwise Rs 2
+    CONSTRAINT chk_order_handling_fee    CHECK (handling_fee = CASE WHEN subtotal < 500 THEN 6 ELSE 2 END),
+
+    -- time must move forward: placed <= packed <= picked up <= delivered
+    -- (a check on a NULL column passes, so orders that aren't packed yet are fine)
+    CONSTRAINT chk_order_packed_after_placed      CHECK (packed_at    >= placed_at),
+    CONSTRAINT chk_order_pickup_after_packed      CHECK (picked_up_at >= packed_at),
+    CONSTRAINT chk_order_delivered_after_pickup   CHECK (delivered_at >= picked_up_at),
+
+    -- each status must have exactly the right columns filled in (the table above)
+    CONSTRAINT chk_order_status_timeline CHECK (
+           (status = 'PLACED'           AND rider_id IS NULL     AND packed_at IS NULL     AND picked_up_at IS NULL     AND delivered_at IS NULL)
+        OR (status = 'PACKING'          AND rider_id IS NULL                               AND picked_up_at IS NULL     AND delivered_at IS NULL)
+        OR (status = 'OUT_FOR_DELIVERY' AND rider_id IS NOT NULL AND packed_at IS NOT NULL AND picked_up_at IS NOT NULL AND delivered_at IS NULL)
+        OR (status = 'DELIVERED'        AND rider_id IS NOT NULL AND packed_at IS NOT NULL AND picked_up_at IS NOT NULL AND delivered_at IS NOT NULL)
+        OR (status = 'CANCELLED'        AND rider_id IS NULL                               AND picked_up_at IS NULL     AND delivered_at IS NULL)
+    )
+    -- PACKING doesn't force packed_at: packing may have started but not finished.
+    -- W03 handles exactly that case with coalesce(packed_at, ...).
+);
