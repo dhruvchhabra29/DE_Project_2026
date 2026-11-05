@@ -268,7 +268,7 @@ PostgreSQL builds one B-tree index for each PRIMARY KEY and UNIQUE constraint. *
 | order_items | order_items_pkey | (order_id, product_id) | PK | 15 MB |
 | inventory_movements | inventory_movements_pkey | movement_id | PK | 1,984 kB |
 
-What these already help: **R05** (cart check) and **R09** use `store_inventory_pkey` because `store_id` is its first column. **R23** (SKU lookup) uses `products_sku_key`. **R04** (one product in every store) can't use `store_inventory_pkey` well, because `product_id` is the *second* column of that index.
+What these already help: **R05** (cart check) and **R09** use `store_inventory_pkey` because `store_id` is its first column. **R23** (SKU lookup) uses `products_sku_key`. **R04** (one product in every Bengaluru store) also uses it: the Phase 3 plan loops over the 19 Bengaluru stores and looks up the full pair (store_id, 1236) each time. A search by `product_id` *alone* can't use this index, because `product_id` is its *second* column. That's why **R12** and **R19** (which search `order_items` by product) read the whole table. See [`docs/03_baseline_timings.md`](03_baseline_timings.md).
 
 ---
 
