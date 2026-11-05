@@ -29,7 +29,7 @@
 
 **Team No.:** T0033 · **Section:** To confirm · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
 
-**Database:** PostgreSQL 16 · **Benchmark laptop:** MacBook Pro M4
+**Database:** PostgreSQL 17.10 · **Benchmark laptop:** MacBook Pro M4
 
 ---
 
