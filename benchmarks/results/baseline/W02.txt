@@ -1,0 +1,66 @@
+=== W02 run 1 ===
+Update on store_inventory si  (cost=4394.73..4451.12 rows=0 width=0) (actual time=14.029..14.029 rows=0 loops=1)
+  Buffers: shared hit=2222 dirtied=10
+  InitPlan 1
+    ->  Aggregate  (cost=4394.00..4394.01 rows=1 width=4) (actual time=13.729..13.729 rows=1 loops=1)
+          Buffers: shared hit=2144
+          ->  Seq Scan on orders  (cost=0.00..4394.00 rows=1 width=4) (actual time=13.705..13.716 rows=2 loops=1)
+                Filter: (((status)::text = ANY ('{PLACED,PACKING}'::text[])) AND (store_id = 43))
+                Rows Removed by Filter: 149998
+                Buffers: shared hit=2144
+  ->  Nested Loop  (cost=0.72..57.11 rows=3 width=24) (actual time=13.771..13.783 rows=5 loops=1)
+        Buffers: shared hit=2163
+        ->  Index Scan using order_items_pkey on order_items oi  (cost=0.42..15.51 rows=5 width=12) (actual time=13.760..13.761 rows=5 loops=1)
+              Index Cond: (order_id = (InitPlan 1).col1)
+              Buffers: shared hit=2148
+        ->  Index Scan using store_inventory_pkey on store_inventory si  (cost=0.29..8.31 rows=1 width=14) (actual time=0.004..0.004 rows=1 loops=5)
+              Index Cond: ((store_id = 43) AND (product_id = oi.product_id))
+              Buffers: shared hit=15
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.499 ms
+Execution Time: 14.269 ms
+=== W02 run 2 ===
+Update on store_inventory si  (cost=4394.73..4451.12 rows=0 width=0) (actual time=13.251..13.252 rows=0 loops=1)
+  Buffers: shared hit=2222 dirtied=1
+  InitPlan 1
+    ->  Aggregate  (cost=4394.00..4394.01 rows=1 width=4) (actual time=13.071..13.072 rows=1 loops=1)
+          Buffers: shared hit=2144
+          ->  Seq Scan on orders  (cost=0.00..4394.00 rows=1 width=4) (actual time=13.052..13.062 rows=2 loops=1)
+                Filter: (((status)::text = ANY ('{PLACED,PACKING}'::text[])) AND (store_id = 43))
+                Rows Removed by Filter: 149998
+                Buffers: shared hit=2144
+  ->  Nested Loop  (cost=0.72..57.11 rows=3 width=24) (actual time=13.106..13.118 rows=5 loops=1)
+        Buffers: shared hit=2163
+        ->  Index Scan using order_items_pkey on order_items oi  (cost=0.42..15.51 rows=5 width=12) (actual time=13.092..13.093 rows=5 loops=1)
+              Index Cond: (order_id = (InitPlan 1).col1)
+              Buffers: shared hit=2148
+        ->  Index Scan using store_inventory_pkey on store_inventory si  (cost=0.29..8.31 rows=1 width=14) (actual time=0.004..0.004 rows=1 loops=5)
+              Index Cond: ((store_id = 43) AND (product_id = oi.product_id))
+              Buffers: shared hit=15
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.410 ms
+Execution Time: 13.311 ms
+=== W02 run 3 ===
+Update on store_inventory si  (cost=4394.73..4451.12 rows=0 width=0) (actual time=12.785..12.786 rows=0 loops=1)
+  Buffers: shared hit=2222 dirtied=1
+  InitPlan 1
+    ->  Aggregate  (cost=4394.00..4394.01 rows=1 width=4) (actual time=12.583..12.583 rows=1 loops=1)
+          Buffers: shared hit=2144
+          ->  Seq Scan on orders  (cost=0.00..4394.00 rows=1 width=4) (actual time=12.563..12.573 rows=2 loops=1)
+                Filter: (((status)::text = ANY ('{PLACED,PACKING}'::text[])) AND (store_id = 43))
+                Rows Removed by Filter: 149998
+                Buffers: shared hit=2144
+  ->  Nested Loop  (cost=0.72..57.11 rows=3 width=24) (actual time=12.627..12.639 rows=5 loops=1)
+        Buffers: shared hit=2163
+        ->  Index Scan using order_items_pkey on order_items oi  (cost=0.42..15.51 rows=5 width=12) (actual time=12.613..12.614 rows=5 loops=1)
+              Index Cond: (order_id = (InitPlan 1).col1)
+              Buffers: shared hit=2148
+        ->  Index Scan using store_inventory_pkey on store_inventory si  (cost=0.29..8.31 rows=1 width=14) (actual time=0.004..0.004 rows=1 loops=5)
+              Index Cond: ((store_id = 43) AND (product_id = oi.product_id))
+              Buffers: shared hit=15
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.365 ms
+Execution Time: 12.839 ms

@@ -1,0 +1,69 @@
+=== R21 run 1 ===
+Sort  (cost=4064.45..4064.48 rows=11 width=16) (actual time=5.521..5.522 rows=8 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2164
+  ->  Hash Right Anti Join  (cost=44.16..4064.26 rows=11 width=16) (actual time=5.510..5.512 rows=8 loops=1)
+        Hash Cond: (o.rider_id = r.rider_id)
+        Buffers: shared hit=2161
+        ->  Seq Scan on orders o  (cost=0.00..4019.00 rows=262 width=4) (actual time=5.392..5.405 rows=274 loops=1)
+              Filter: (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone)
+              Rows Removed by Filter: 149726
+              Buffers: shared hit=2144
+        ->  Hash  (cost=44.00..44.00 rows=13 width=16) (actual time=0.090..0.090 rows=14 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=17
+              ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.007..0.084 rows=14 loops=1)
+                    Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+                    Rows Removed by Filter: 1786
+                    Buffers: shared hit=17
+Planning:
+  Buffers: shared hit=159
+Planning Time: 0.362 ms
+Execution Time: 5.564 ms
+=== R21 run 2 ===
+Sort  (cost=4064.45..4064.48 rows=11 width=16) (actual time=5.391..5.392 rows=8 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2164
+  ->  Hash Right Anti Join  (cost=44.16..4064.26 rows=11 width=16) (actual time=5.378..5.381 rows=8 loops=1)
+        Hash Cond: (o.rider_id = r.rider_id)
+        Buffers: shared hit=2161
+        ->  Seq Scan on orders o  (cost=0.00..4019.00 rows=262 width=4) (actual time=5.262..5.275 rows=274 loops=1)
+              Filter: (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone)
+              Rows Removed by Filter: 149726
+              Buffers: shared hit=2144
+        ->  Hash  (cost=44.00..44.00 rows=13 width=16) (actual time=0.090..0.090 rows=14 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=17
+              ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.011..0.080 rows=14 loops=1)
+                    Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+                    Rows Removed by Filter: 1786
+                    Buffers: shared hit=17
+Planning:
+  Buffers: shared hit=159
+Planning Time: 0.437 ms
+Execution Time: 5.421 ms
+=== R21 run 3 ===
+Sort  (cost=4064.45..4064.48 rows=11 width=16) (actual time=5.276..5.277 rows=8 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=2164
+  ->  Hash Right Anti Join  (cost=44.16..4064.26 rows=11 width=16) (actual time=5.264..5.266 rows=8 loops=1)
+        Hash Cond: (o.rider_id = r.rider_id)
+        Buffers: shared hit=2161
+        ->  Seq Scan on orders o  (cost=0.00..4019.00 rows=262 width=4) (actual time=5.161..5.175 rows=274 loops=1)
+              Filter: (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone)
+              Rows Removed by Filter: 149726
+              Buffers: shared hit=2144
+        ->  Hash  (cost=44.00..44.00 rows=13 width=16) (actual time=0.076..0.076 rows=14 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+              Buffers: shared hit=17
+              ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.005..0.070 rows=14 loops=1)
+                    Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+                    Rows Removed by Filter: 1786
+                    Buffers: shared hit=17
+Planning:
+  Buffers: shared hit=159
+Planning Time: 0.314 ms
+Execution Time: 5.306 ms

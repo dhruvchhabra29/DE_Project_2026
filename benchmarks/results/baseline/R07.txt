@@ -1,0 +1,54 @@
+=== R07 run 1 ===
+Gather Merge  (cost=4577.84..4577.96 rows=1 width=26) (actual time=11.235..12.327 rows=4 loops=1)
+  Workers Planned: 1
+  Workers Launched: 1
+  Buffers: shared hit=2184
+  ->  Sort  (cost=3577.83..3577.84 rows=1 width=26) (actual time=9.089..9.089 rows=2 loops=2)
+        Sort Key: placed_at
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=2184
+        Worker 0:  Sort Method: quicksort  Memory: 25kB
+        ->  Parallel Seq Scan on orders  (cost=0.00..3577.82 rows=1 width=26) (actual time=9.043..9.047 rows=2 loops=2)
+              Filter: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Rows Removed by Filter: 74998
+              Buffers: shared hit=2147
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.422 ms
+Execution Time: 12.368 ms
+=== R07 run 2 ===
+Gather Merge  (cost=4577.84..4577.96 rows=1 width=26) (actual time=7.132..8.242 rows=4 loops=1)
+  Workers Planned: 1
+  Workers Launched: 1
+  Buffers: shared hit=2184
+  ->  Sort  (cost=3577.83..3577.84 rows=1 width=26) (actual time=6.304..6.304 rows=2 loops=2)
+        Sort Key: placed_at
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=2184
+        Worker 0:  Sort Method: quicksort  Memory: 25kB
+        ->  Parallel Seq Scan on orders  (cost=0.00..3577.82 rows=1 width=26) (actual time=6.287..6.290 rows=2 loops=2)
+              Filter: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Rows Removed by Filter: 74998
+              Buffers: shared hit=2147
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.233 ms
+Execution Time: 8.263 ms
+=== R07 run 3 ===
+Gather Merge  (cost=4577.84..4577.96 rows=1 width=26) (actual time=6.403..8.153 rows=4 loops=1)
+  Workers Planned: 1
+  Workers Launched: 1
+  Buffers: shared hit=2184
+  ->  Sort  (cost=3577.83..3577.84 rows=1 width=26) (actual time=5.420..5.420 rows=2 loops=2)
+        Sort Key: placed_at
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=2184
+        Worker 0:  Sort Method: quicksort  Memory: 25kB
+        ->  Parallel Seq Scan on orders  (cost=0.00..3577.82 rows=1 width=26) (actual time=5.400..5.404 rows=2 loops=2)
+              Filter: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Rows Removed by Filter: 74998
+              Buffers: shared hit=2147
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.246 ms
+Execution Time: 8.196 ms

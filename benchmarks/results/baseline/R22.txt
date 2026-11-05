@@ -1,0 +1,39 @@
+=== R22 run 1 ===
+Limit  (cost=20891.95..20892.01 rows=25 width=35) (actual time=35.177..35.179 rows=25 loops=1)
+  Buffers: shared hit=2147, temp read=763 written=922
+  ->  Sort  (cost=20641.95..21016.95 rows=150000 width=35) (actual time=30.113..33.428 rows=100025 loops=1)
+        Sort Key: placed_at DESC
+        Sort Method: external merge  Disk: 7352kB
+        Buffers: shared hit=2147, temp read=763 written=922
+        ->  Seq Scan on orders  (cost=0.00..3644.00 rows=150000 width=35) (actual time=0.004..10.643 rows=150000 loops=1)
+              Buffers: shared hit=2144
+Planning:
+  Buffers: shared hit=86
+Planning Time: 0.250 ms
+Execution Time: 36.807 ms
+=== R22 run 2 ===
+Limit  (cost=20891.95..20892.01 rows=25 width=35) (actual time=34.236..34.241 rows=25 loops=1)
+  Buffers: shared hit=2147, temp read=763 written=922
+  ->  Sort  (cost=20641.95..21016.95 rows=150000 width=35) (actual time=29.279..32.510 rows=100025 loops=1)
+        Sort Key: placed_at DESC
+        Sort Method: external merge  Disk: 7352kB
+        Buffers: shared hit=2147, temp read=763 written=922
+        ->  Seq Scan on orders  (cost=0.00..3644.00 rows=150000 width=35) (actual time=0.004..10.502 rows=150000 loops=1)
+              Buffers: shared hit=2144
+Planning:
+  Buffers: shared hit=86
+Planning Time: 0.188 ms
+Execution Time: 35.672 ms
+=== R22 run 3 ===
+Limit  (cost=20891.95..20892.01 rows=25 width=35) (actual time=35.333..35.335 rows=25 loops=1)
+  Buffers: shared hit=2147, temp read=763 written=922
+  ->  Sort  (cost=20641.95..21016.95 rows=150000 width=35) (actual time=30.469..33.635 rows=100025 loops=1)
+        Sort Key: placed_at DESC
+        Sort Method: external merge  Disk: 7352kB
+        Buffers: shared hit=2147, temp read=763 written=922
+        ->  Seq Scan on orders  (cost=0.00..3644.00 rows=150000 width=35) (actual time=0.004..10.783 rows=150000 loops=1)
+              Buffers: shared hit=2144
+Planning:
+  Buffers: shared hit=86
+Planning Time: 0.171 ms
+Execution Time: 37.593 ms
