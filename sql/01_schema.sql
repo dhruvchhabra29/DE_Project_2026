@@ -106,3 +106,67 @@ CREATE TABLE products (
     -- if a shelf life is given, it must be at least 1 day (NULL is allowed and passes)
     CONSTRAINT chk_product_shelf_life  CHECK (shelf_life_days > 0)
 );
+
+
+-- ---------------------------------------------------------------------
+-- 5. customers: people who order (40,000 rows)
+-- ---------------------------------------------------------------------
+CREATE TABLE customers (
+    customer_id  INTEGER       PRIMARY KEY,
+    full_name    VARCHAR(100)  NOT NULL,                 -- NOT unique: many people share a name
+    phone        VARCHAR(10)   NOT NULL UNIQUE,          -- login id: one account per phone number
+    email        VARCHAR(100)  NULL UNIQUE,              -- optional (18,023 blank). UNIQUE still allows many NULLs
+    city_id      INTEGER       NOT NULL
+                 REFERENCES cities (city_id) ON DELETE RESTRICT,
+    created_at   TIMESTAMPTZ   NOT NULL,                 -- when the account was created
+
+    -- Indian mobile number: 10 digits, first digit 6-9
+    CONSTRAINT chk_customer_phone_format  CHECK (phone ~ '^[6-9][0-9]{9}$'),
+    -- simple e-mail shape: something@something.domain
+    CONSTRAINT chk_customer_email_format  CHECK (email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[A-Za-z]{2,}$'),
+    -- store e-mails in lower case, so "A@x.com" and "a@x.com" can't both exist and dodge UNIQUE
+    CONSTRAINT chk_customer_email_lower   CHECK (email = lower(email))
+);
+
+
+-- ---------------------------------------------------------------------
+-- 6. riders: delivery riders, each attached to one store (1,800 rows, 15 per store)
+-- ---------------------------------------------------------------------
+CREATE TABLE riders (
+    rider_id   INTEGER       PRIMARY KEY,
+    full_name  VARCHAR(100)  NOT NULL,
+    phone      VARCHAR(10)   NOT NULL UNIQUE,
+    store_id   INTEGER       NOT NULL
+               REFERENCES dark_stores (store_id) ON DELETE RESTRICT,   -- riders keep their history; mark them EXITED instead
+    joined_on  DATE          NOT NULL,
+    status     VARCHAR(10)   NOT NULL DEFAULT 'ACTIVE',
+
+    CONSTRAINT chk_rider_phone_format  CHECK (phone ~ '^[6-9][0-9]{9}$'),
+    -- the only 3 values found in the data
+    CONSTRAINT chk_rider_status        CHECK (status IN ('ACTIVE', 'ON_LEAVE', 'EXITED'))
+);
+
+
+-- ---------------------------------------------------------------------
+-- 7. store_inventory: stock and price of ONE product in ONE store (126,000 rows)
+--    Each store stocks 1,050 of the 1,500 products.
+-- ---------------------------------------------------------------------
+CREATE TABLE store_inventory (
+    store_id          INTEGER        NOT NULL
+                      REFERENCES dark_stores (store_id) ON DELETE CASCADE,  -- a stock row is part of its store
+    product_id        INTEGER        NOT NULL
+                      REFERENCES products (product_id) ON DELETE CASCADE,   -- ...and part of its product
+    quantity_on_hand  INTEGER        NOT NULL,           -- units on the shelf right now
+    reorder_level     INTEGER        NOT NULL,           -- when stock falls to this, reorder (R09, W04)
+    selling_price     NUMERIC(10,2)  NOT NULL,           -- this store's price (can be below MRP)
+    updated_at        TIMESTAMPTZ    NOT NULL,
+
+    -- COMPOSITE primary key: neither column is unique alone,
+    -- but each (store, product) pair appears exactly once
+    PRIMARY KEY (store_id, product_id),
+
+    -- stock can't go below zero (W02 uses greatest(0, ...) for the same reason)
+    CONSTRAINT chk_inventory_qty_nonneg      CHECK (quantity_on_hand >= 0),
+    CONSTRAINT chk_inventory_reorder_nonneg  CHECK (reorder_level >= 0),
+    CONSTRAINT chk_inventory_price_positive  CHECK (selling_price > 0)
+);

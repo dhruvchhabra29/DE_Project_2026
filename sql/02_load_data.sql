@@ -21,6 +21,11 @@ SET search_path TO blinkit;
 \copy dark_stores  FROM 'seed_data/dark_stores.csv'  WITH (FORMAT csv, HEADER true)
 \copy products     FROM 'seed_data/products.csv'     WITH (FORMAT csv, HEADER true)
 
+-- 5-7: need cities / dark_stores / products to exist first
+\copy customers        FROM 'seed_data/customers.csv'        WITH (FORMAT csv, HEADER true)
+\copy riders           FROM 'seed_data/riders.csv'           WITH (FORMAT csv, HEADER true)
+\copy store_inventory  FROM 'seed_data/store_inventory.csv'  WITH (FORMAT csv, HEADER true)
+
 -- Refresh the planner's statistics, so the query plans in Phase 3 are realistic
 ANALYZE;
 
@@ -28,4 +33,7 @@ ANALYZE;
 SELECT 'cities'      AS table_name, count(*) AS loaded, 10   AS expected FROM cities
 UNION ALL SELECT 'categories',  count(*), 12   FROM categories
 UNION ALL SELECT 'dark_stores', count(*), 120  FROM dark_stores
-UNION ALL SELECT 'products',    count(*), 1500 FROM products;
+UNION ALL SELECT 'products',    count(*), 1500 FROM products
+UNION ALL SELECT 'customers',   count(*), 40000  FROM customers
+UNION ALL SELECT 'riders',      count(*), 1800   FROM riders
+UNION ALL SELECT 'store_inventory', count(*), 126000 FROM store_inventory;
