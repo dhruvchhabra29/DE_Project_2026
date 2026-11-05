@@ -324,3 +324,73 @@ We record it as a known redundancy (data problem D4).
 | `store_inventory.quantity_on_hand` | Opening stock + Σ movements − Σ items sold | Only **888 of 126,000** rows equal "movements − delivered sales". The export has no opening stock, so it **can't** be recomputed | ✅ Yes | It's the live balance that checkout (R05) and the store screens (R02, R03, R09) need in under 5 ms. Recomputing it from 765,000 rows on every page view would be far too slow. W02 and W04 keep it up to date. |
 
 **Summary:** each redundant column is kept on purpose, either for **speed** (no need to recompute from big tables) or for **history** (the value at the time of the order must not change). Where it can be checked inside one row, a **CHECK constraint** guarantees it stays correct (total, fees). Where it crosses tables, an **integrity check** proves it (subtotal, rider's store).
+
+---
+
+## 5. Load results
+
+Built from an empty database: `01_schema.sql` → `02_load_data.sql`. **No errors. All rows load, and all constraints pass.** The whole rebuild takes about 7 seconds, and the database is 102 MB.
+
+| # | Table | Rows loaded | Expected (README) | OK |
+|--:|---|--:|--:|:-:|
+| 1 | cities | 10 | 10 | ✅ |
+| 2 | categories | 12 | 12 | ✅ |
+| 3 | dark_stores | 120 | 120 | ✅ |
+| 4 | products | 1,500 | 1,500 | ✅ |
+| 5 | customers | 40,000 | 40,000 | ✅ |
+| 6 | riders | 1,800 | 1,800 | ✅ |
+| 7 | store_inventory | 126,000 | 126,000 | ✅ |
+| 8 | orders | 150,000 | 150,000 | ✅ |
+| 9 | order_items | 675,000 | 675,000 | ✅ |
+| 10 | inventory_movements | 90,000 | 90,000 | ✅ |
+
+**Load order** (parents before children, so every FK target already exists):
+`cities → categories → dark_stores → products → customers → riders → store_inventory → orders → order_items → inventory_movements`
+
+**Did any constraint fail while loading?** No. We profiled every column first (blank counts, distinct values, min/max, formats), then tested each rule with a query **before** writing it as a constraint. Rules that the data breaks only *across* tables can't be CHECK constraints, so they became integrity checks instead (§6), and the rows that break them are reported as data problems (§7).
+
+**All 30 workload queries** (`queries/workload_30.sql`) run on this schema without errors.
+
+---
+
+## 6. Integrity-check results
+
+From [`sql/03_integrity_checks.sql`](../sql/03_integrity_checks.sql). Each check counts the rows that **break** a rule.
+
+| # | Rule (compares two tables) | Rows breaking it | Result |
+|--:|---|--:|:-:|
+| 1 | Every ordered product is stocked by the order's store | 0 | ✅ PASS |
+| 2 | A rider only delivers orders of their own store | 0 | ✅ PASS |
+| 3 | A substitute is a product the same store stocks | 0 | ✅ PASS |
+| 4 | `subtotal` = Σ(quantity_delivered × unit_price) | 0 | ✅ PASS |
+| 5 | Shelf life is given only for perishable products | 0 | ✅ PASS |
+| 6 | Store-code prefix matches the store's city | 0 | ✅ PASS |
+| 7 | Store selling price is not above MRP | 0 | ✅ PASS |
+| 8 | Order placed after the customer account was created | 25,171 | ⚠️ data problem D1 |
+| 9 | Order handled on or after the rider's joining date | 23,231 | ⚠️ data problem D2 |
+| 10 | A cancelled order shows 0 delivered items | 5,752 | ⚠️ data problem D3 |
+
+---
+
+## 7. Data problems found
+
+We **kept every row**. The brief says the schema must accept all the data, and deleting or "fixing" rows is not allowed. Each problem is explained here instead.
+
+| # | Problem | Size | Likely cause | Effect on the 30 queries |
+|---|---|---|---|---|
+| **D1** | Orders placed **before the customer's account was created**. Example: order 5 on 1 Jan 2025, customer 1469 created on 11 Jun 2025. | 25,171 orders (17%), 10,263 customers | `created_at` was overwritten later (re-registration or a phone change), so it isn't the real sign-up date | None directly. No query uses `customers.created_at`. R16 builds cohorts from the **first order**, which is the right choice for this reason. |
+| **D2** | Orders handled by a rider **before the rider joined**. Example: order 9 on 1 Jan 2025, rider 226 joined on 10 Mar 2026. | 23,231 orders, 652 riders | `joined_on` is probably the date of the rider's *latest* contract | None directly. Rider tenure analysis would be wrong. |
+| **D3** | **Every cancelled order still shows delivered items**, and they're counted in `subtotal`/`total_amount`. Example: order 7 is CANCELLED, but its 3 lines show 2/2, 1/1 and 3/3 delivered. | All 5,752 cancelled orders · 25,419 lines · 50,567 units · ₹66,74,306 in subtotals | `quantity_delivered` is filled at packing time and never reset when the order is cancelled | **R19** (units sold), **R18** (dead stock) and **R14** (fill rate) don't filter on status, so cancelled orders count as sales. **R17** sums fees of cancelled orders too. R08, R11, R20 and R25 filter `status = 'DELIVERED'` and are unaffected. |
+| **D4** | Only **70 product names for 1,500 products**. Each name appears about 21 times with a different SKU and MRP (e.g. "Vim Detergent 1 kg" ×21). | 1,500 products | Duplicate catalogue entries (the same item listed under many SKUs) | `product_name` can't be UNIQUE. **R03** (search "milk") returns several rows per name. **R19** lists the same name many times. |
+| **D5** | `small_cart_fee` is **₹0 on every order**, but the brief says small carts pay extra. The small-cart charge actually appears as the ₹25 `delivery_fee` on orders below ₹199. | 150,000 orders (2,320 paid the ₹25) | The fee is booked in the wrong column | **R17** (small-cart fee per city per month) returns **0 for every row**. That's a correct answer to the query, but a misleading one for finance. |
+| **D6** | `quantity_on_hand` **doesn't match** movements − sales. | 125,112 of 126,000 rows don't match | The export has no opening-stock figure, and stock is counted separately | We can't rebuild stock from history, so the column is the source of truth (see §4). |
+| **D7** | The 2 inactive stores (51, 74) still have stock rows, but no orders or movements. | 2,100 stock rows | Stores were closed without clearing inventory | R04 and R09 could show stock at a closed store. R01 correctly skips them (`WHERE is_active`). |
+
+### 7.1 NULLs that will matter in Phase 4
+`order_items.substitute_product_id` is **NULL on 660,000 of 675,000 lines**. Query **R13** uses `product_id NOT IN (SELECT substitute_product_id …)`. In SQL, `x NOT IN (list that contains a NULL)` is never TRUE, because comparing with NULL gives "unknown". So **R13 always returns 0 rows**, which is exactly the category team's complaint in **P5**. We confirmed that R13 returns 0 rows on our schema. The fix (`NOT EXISTS`) comes in Phase 4.
+
+---
+
+## 8. ER diagram
+
+See [`diagrams/er_diagram.png`](../diagrams/er_diagram.png) (added in a separate commit, with its Mermaid source).
