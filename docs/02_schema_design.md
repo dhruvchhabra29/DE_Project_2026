@@ -207,3 +207,120 @@ PACKING allows a blank `packed_at` (packing may have started but not finished). 
 | 34 | inventory_movements | chk_movement_sign | sign matches the type |
 
 > The fee rules (21, 22) are business rules we found in the data. If Blinkit changes its prices, these two constraints must be updated in the same release.
+
+---
+
+## 2. Keys and relationships
+
+### 2.1 Relationships and cardinalities
+| Parent (one) | Child (many) | Cardinality | Foreign key | ON DELETE | Why this rule |
+|---|---|---|---|---|---|
+| cities | dark_stores | 1 : N | `dark_stores.city_id` | RESTRICT | A city with stores is still in use. |
+| cities | customers | 1 : N | `customers.city_id` | RESTRICT | The same reason. |
+| categories | products | 1 : N | `products.category_id` | RESTRICT | Products would lose their category. |
+| dark_stores | riders | 1 : N (15 per store) | `riders.store_id` | RESTRICT | Riders carry delivery history. Mark them EXITED instead. |
+| dark_stores ↔ products | store_inventory | **M : N** (a store stocks many products, a product is in many stores) | `store_inventory.store_id`, `.product_id` | **CASCADE** | A stock row has no meaning without its store or product, because it is *part of* both. |
+| customers | orders | 1 : N | `orders.customer_id` | RESTRICT | Order history (finance, support) must never vanish. |
+| dark_stores | orders | 1 : N | `orders.store_id` | RESTRICT | The same reason. |
+| riders | orders | 1 : N, **optional** (an order has 0 or 1 rider) | `orders.rider_id` (NULL allowed) | RESTRICT | Not SET NULL: a DELIVERED order must keep its rider (enforced by `chk_order_status_timeline`). |
+| orders ↔ products | order_items | **M : N** (an order has many products, a product is in many orders) | `order_items.order_id`, `.product_id` | order → **CASCADE**, product → RESTRICT | An item line is *part of* its order. A product that was sold must stay. |
+| products | order_items (as substitute) | 1 : N, **optional** | `order_items.substitute_product_id` | RESTRICT | The same reason as product_id. |
+| store_inventory | inventory_movements | 1 : N | **composite** `(store_id, product_id)` | RESTRICT | Stock history is audit data. |
+
+**What happens in practice?** Deleting a store would cascade to its stock rows, but the store's orders, riders and movements all RESTRICT, so **PostgreSQL blocks the delete**. That's what we want: in a real business you close a store (`is_active = false`), you don't delete it. The only delete that really cascades is **an order → its order_items**.
+
+**Note:** PostgreSQL does **not** create an index for a foreign-key column automatically. So `orders.customer_id`, `orders.store_id`, `order_items.product_id` and the others have **no index yet**. That's one reason many of the 30 queries will be slow in the Phase 3 baseline. We add indexes in Phase 4.
+
+### 2.2 Candidate keys
+| Table | Primary key | Other candidate keys (UNIQUE) |
+|---|---|---|
+| cities | city_id | city_name |
+| categories | category_id | category_name |
+| dark_stores | store_id | store_code |
+| products | product_id | sku |
+| customers | customer_id | phone, email (when given) |
+| riders | rider_id | phone |
+| store_inventory | **(store_id, product_id)** | none |
+| orders | order_id | none |
+| order_items | **(order_id, product_id)** | none |
+| inventory_movements | movement_id | none |
+
+### 2.3 Indexes that exist after Phase 2 (all automatic)
+PostgreSQL builds one B-tree index for each PRIMARY KEY and UNIQUE constraint. **We created no other index**, so the Phase 3 baseline shows an untuned database.
+
+| Table | Index | Columns | From | Size |
+|---|---|---|---|--:|
+| cities | cities_pkey | city_id | PK | 16 kB |
+| cities | cities_city_name_key | city_name | UNIQUE | 16 kB |
+| categories | categories_pkey | category_id | PK | 16 kB |
+| categories | categories_category_name_key | category_name | UNIQUE | 16 kB |
+| dark_stores | dark_stores_pkey | store_id | PK | 16 kB |
+| dark_stores | dark_stores_store_code_key | store_code | UNIQUE | 16 kB |
+| products | products_pkey | product_id | PK | 48 kB |
+| products | products_sku_key | sku | UNIQUE | 64 kB |
+| customers | customers_pkey | customer_id | PK | 896 kB |
+| customers | customers_phone_key | phone | UNIQUE | 1,248 kB |
+| customers | customers_email_key | email | UNIQUE | 1,440 kB |
+| riders | riders_pkey | rider_id | PK | 56 kB |
+| riders | riders_phone_key | phone | UNIQUE | 72 kB |
+| store_inventory | store_inventory_pkey | (store_id, product_id) | PK | 2,792 kB |
+| orders | orders_pkey | order_id | PK | 3,312 kB |
+| order_items | order_items_pkey | (order_id, product_id) | PK | 15 MB |
+| inventory_movements | inventory_movements_pkey | movement_id | PK | 1,984 kB |
+
+What these already help: **R05** (cart check) and **R09** use `store_inventory_pkey` because `store_id` is its first column. **R23** (SKU lookup) uses `products_sku_key`. **R04** (one product in every store) can't use `store_inventory_pkey` well, because `product_id` is the *second* column of that index.
+
+---
+
+## 3. Functional dependencies and normal forms
+
+**Quick reminder:**
+- **FD** `X → Y` means "if you know X, you know Y".
+- **1NF:** every cell holds one value, and there are no repeating groups.
+- **2NF:** 1NF, and no column depends on only *part* of a composite key.
+- **3NF:** 2NF, and no non-key column depends on another non-key column (no *transitive* dependency).
+- **BCNF:** for every FD `X → Y`, X is a candidate key.
+
+We wrote the FDs from the meaning of the data, then **tested each suspicious one with SQL on all rows** (the numbers below).
+
+**1NF holds for every table.** Each cell is one value, and there are no lists or repeating columns. `pack_size` values such as `4 x 100 g` are a single label printed on the pack, not a list we query inside.
+
+| Table | Functional dependencies | Normal form |
+|---|---|---|
+| cities | city_id → city_name, state · city_name → city_id, state | **BCNF**: both determinants are candidate keys. state → city does **not** hold (Maharashtra has Mumbai and Pune). |
+| categories | category_id → category_name, is_perishable · category_name → category_id, is_perishable | **BCNF** |
+| dark_stores | store_id → store_code, city_id, latitude, longitude, opened_on, is_active, max_daily_orders · store_code → store_id (and everything) | **BCNF**: every determinant is a candidate key. *Note:* the first 3 letters of `store_code` repeat the city (`MUM` = Mumbai). That's a small redundancy inside a label, kept because the code is a human-readable id. Integrity check 6 proves it's always consistent. |
+| products | product_id → sku, product_name, brand, category_id, pack_size, mrp, shelf_life_days, is_active · sku → product_id (and everything) · **product_name → brand, category_id, pack_size, shelf_life_days** *(holds in the data: each of the 70 names has exactly 1 brand, 1 category, 1 pack size and 1 shelf life)* | **Not strictly 3NF**, because product_name is not a key but decides 4 other columns. See the explanation below the table. |
+| customers | customer_id → full_name, phone, email, city_id, created_at · phone → customer_id · email → customer_id (when not NULL) | **BCNF** |
+| riders | rider_id → full_name, phone, store_id, joined_on, status · phone → rider_id | **BCNF** |
+| store_inventory | (store_id, product_id) → quantity_on_hand, reorder_level, selling_price, updated_at | **BCNF**. **2NF check:** no column depends on just one half of the key. Tested: every product has *different* reorder levels and prices in different stores (1,500 of 1,500), and every store has different values for different products (120 of 120). |
+| orders | order_id → every column · **subtotal → delivery_fee, handling_fee** · **(subtotal, delivery_fee, handling_fee, small_cart_fee) → total_amount** · **rider_id → store_id** *(the rider's store, true for 144,178 of 144,178 orders with a rider)* | **Not strictly 3NF**: the fees and total depend on subtotal, and store_id depends on rider_id. All deliberate. See §4. |
+| order_items | (order_id, product_id) → quantity_ordered, quantity_delivered, unit_price, substitute_product_id | **BCNF**. 2NF holds: quantities and substitute belong to this line, not to the order or product alone. unit_price is a historical copy (§4). |
+| inventory_movements | movement_id → store_id, product_id, movement_type, quantity, moved_at | **BCNF** |
+
+### 3.1 products: why we don't split the table
+In the export, the **name already decides the brand, category, pack size and shelf life** ("Vim Detergent 1 kg" is always brand Vim, category Household, pack 1 kg). Only `sku`, `mrp` and `is_active` change between the about 21 rows sharing a name. The textbook 3NF fix would be:
+```
+product_master(product_name PK, brand, category_id, pack_size, shelf_life_days)
+products(product_id PK, sku, product_name FK, mrp, is_active)
+```
+**We keep the single table**, because:
+1. The 30 queries are fixed and read `p.category_id`, `p.brand` and `p.pack_size` from `products` (R02, R13, R19, R23). Splitting the table would break them.
+2. In a real catalogue, two products *can* share a display name and differ in brand or pack. So "name → brand" is probably a coincidence of this export, not a true business rule. A true FD is a rule that must hold for all future data, not just today's rows.
+
+We record it as a known redundancy (data problem D4).
+
+---
+
+## 4. Derived and redundant columns (and whether keeping them is justified)
+
+| Column | Can be computed from | Proof in our data | Keep it? | Why |
+|---|---|---|---|---|
+| `orders.subtotal` | Σ(quantity_delivered × unit_price) of the order's items | Equal for **150,000 of 150,000** orders (integrity check 4) | ✅ Yes | Reports (R17, R20, R25) and the bill would otherwise have to add up 675,000 item lines every time. The value is fixed once the order is done. |
+| `orders.delivery_fee`, `orders.handling_fee` | The fee rules applied to subtotal | `chk_order_delivery_fee` and `chk_order_handling_fee` pass on all rows | ✅ Yes | **History:** if Blinkit changes the ₹199 / ₹500 rules next year, old orders must still show the fee the customer actually paid. The CHECKs keep them consistent today. |
+| `orders.total_amount` | subtotal + all fees | `chk_order_total` passes on all rows | ✅ Yes | The amount actually charged. Finance (R20, R25) sums it directly, and the CHECK means it can never drift. |
+| `orders.store_id` | `riders.store_id` of the order's rider | Equal for **144,178 of 144,178** orders with a rider (integrity check 2) | ✅ Yes | PLACED, PACKING and CANCELLED orders have **no rider**, but still need a store. Every store query (R07, R08, R11, R14) filters on it. |
+| `order_items.unit_price` | `store_inventory.selling_price` | Equal for **675,000 of 675,000** lines *today* | ✅ Yes | A **price snapshot**: store prices change every day, but an old bill must not change. Same reasoning as `subtotal`. |
+| `store_inventory.quantity_on_hand` | Opening stock + Σ movements − Σ items sold | Only **888 of 126,000** rows equal "movements − delivered sales". The export has no opening stock, so it **can't** be recomputed | ✅ Yes | It's the live balance that checkout (R05) and the store screens (R02, R03, R09) need in under 5 ms. Recomputing it from 765,000 rows on every page view would be far too slow. W02 and W04 keep it up to date. |
+
+**Summary:** each redundant column is kept on purpose, either for **speed** (no need to recompute from big tables) or for **history** (the value at the time of the order must not change). Where it can be checked inside one row, a **CHECK constraint** guarantees it stays correct (total, fees). Where it crosses tables, an **integrity check** proves it (subtotal, rider's store).
