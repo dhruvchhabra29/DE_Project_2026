@@ -66,7 +66,7 @@ Every number below is copied by a script from the `Execution Time` lines in thos
 | Fast (under 1.2 ms) | R01, R02, R03, R04, R05, R09, R23, W01, W04 | 0.036 – 1.099 ms |
 
 - **R19 is the query the README warns about** ("noticeably longer than the others"). Section *Scan type and reason* explains why.
-- **Run 1 is often slower than runs 2 and 3.** Examples: R06 17.6 → 9.0 → 9.0 ms, R12 21.9 → 8.7 → 10.1 ms, W05 62.4 → 15.4 → 13.8 ms. In run 1, some pages must come from disk into PostgreSQL's memory (its *shared buffers*). Runs 2 and 3 find them already there (`Buffers: shared hit`). That's why the method averages 3 runs instead of trusting one.
+- **Run 1 is often slower than runs 2 and 3.** Examples: R06 17.6 → 9.0 → 9.0 ms, R12 21.9 → 8.7 → 10.1 ms, W05 62.4 → 15.4 → 13.8 ms. It is **not** disk I/O: the plans show `Buffers: shared hit` only, so every page was already in PostgreSQL's memory in all 3 runs. Run 1 pays *warm-up* costs instead. The CPU caches are cold for this table because the previous query worked on different data. In W05 (and R10, W01–W04), the first run also sets *hint bits*: it marks each row's transaction as committed, which shows as `dirtied=` in the plan (`dirtied=450` in W05 run 1). Averaging 3 runs smooths this out, which is why the method doesn't trust a single run.
 - **R13 returns 0 rows.** It's fast (22.9 ms), but its answer is wrong (the NULL trap, see the design doc §7.1). It gets fixed in Phase 4.
 
 ---
@@ -105,7 +105,7 @@ Scan types are from the plan of each query (all 3 runs used the same plan). "Row
 | **R19** | **1,905.465** | Seq Scan on products → **Seq Scan on order_items repeated 125 times** → Index Scan on orders_pkey (56,292 loops) | **The slowest query.** The units-sold subquery is *correlated* (it depends on `p.product_id`), so it runs once per Fruits & Vegetables product. Each run reads all 675,000 order lines: 125 × 675,000 ≈ **84 million rows**. |
 | R20 | 10.510 | Parallel Seq Scan on orders | `placed_at::date BETWEEN …` casts the column, which blocks index use. Reads all orders to keep 7,816 June deliveries. |
 | R21 | 5.430 | Seq Scan on orders + Seq Scan on riders (Hash Right Anti Join) | No index on `orders.placed_at` or `rider_id`. Reads all orders to find the 274 on 30 June, and all 1,800 riders to find store 43's 14 active ones. |
-| R22 | 36.691 | Seq Scan on orders → top-N heapsort | `OFFSET 100000` forces PostgreSQL to sort **all 150,000 orders** by `placed_at`, then throw away the first 100,000 to return 25. The second-slowest read query. |
+| R22 | 36.691 | Seq Scan on orders → Sort (**external merge, Disk: 7,352 kB**) | `OFFSET 100000` forces PostgreSQL to sort **all 150,000 orders** by `placed_at` and keep the first 100,025, only to throw away 100,000 of them and return 25. That many rows doesn't fit in sort memory (`work_mem`), so the sort **spills to temporary files on disk** (`temp read=763 written=922`). It's the only query in the baseline that touches the disk, and the second-slowest read query. |
 | R23 | 0.036 | Index Scan on products_sku_key | The UNIQUE constraint on `sku` created a B-tree index, so this is one jump. Already optimal. |
 | R24 | 3.782 | Seq Scan on inventory_movements | No index on `store_id` or `moved_at`. Reads 90,000 movements to keep 7. |
 | R25 | 18.937 | Seq Scan on orders + Seq Scan on customers (Hash Join) | Reads all orders (keeps the 47,725 delivered in 2026) and all customers (keeps the 6,400 in Mumbai), then joins and groups them. A report that needs about a third of the orders anyway. |
