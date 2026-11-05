@@ -393,4 +393,122 @@ We **kept every row**. The brief says the schema must accept all the data, and d
 
 ## 8. ER diagram
 
-See [`diagrams/er_diagram.png`](../diagrams/er_diagram.png) (added in a separate commit, with its Mermaid source).
+![ER diagram of the Blinkit database](../diagrams/er_diagram.png)
+
+**How to read it:** a bar (┼) marks the **one** side and a crow's foot (⋔) marks the **many** side. A dashed line is an **optional** link: the foreign key may be NULL (`orders.rider_id`, `order_items.substitute_product_id`). The two many-to-many relationships are broken into the bridge tables **`store_inventory`** (stores ↔ products) and **`order_items`** (orders ↔ products), each with a 2-column primary key.
+
+### Mermaid source
+The same diagram as Mermaid code (GitHub draws it automatically):
+
+```mermaid
+erDiagram
+    cities          ||--o{ dark_stores         : "has"
+    cities          ||--o{ customers           : "lives in"
+    categories      ||--o{ products            : "groups"
+    dark_stores     ||--o{ riders              : "employs"
+    dark_stores     ||--o{ store_inventory     : "stocks"
+    products        ||--o{ store_inventory     : "is stocked as"
+    store_inventory ||--o{ inventory_movements : "changes"
+    customers       ||--o{ orders              : "places"
+    dark_stores     ||--o{ orders              : "serves"
+    riders          |o--o{ orders              : "delivers"
+    orders          ||--|{ order_items         : "contains"
+    products        ||--o{ order_items         : "sold as"
+    products        |o--o{ order_items         : "substitute"
+
+    cities {
+        int     city_id    PK
+        varchar city_name  UK
+        varchar state
+    }
+    categories {
+        int     category_id   PK
+        varchar category_name UK
+        boolean is_perishable
+    }
+    dark_stores {
+        int     store_id         PK
+        varchar store_code       UK "ABC-DEF-12"
+        int     city_id          FK
+        numeric latitude
+        numeric longitude
+        date    opened_on
+        boolean is_active
+        int     max_daily_orders
+    }
+    products {
+        int      product_id      PK
+        varchar  sku             UK "BK + 8 digits"
+        varchar  product_name
+        varchar  brand
+        int      category_id     FK
+        varchar  pack_size
+        numeric  mrp
+        smallint shelf_life_days "NULL = non-perishable"
+        boolean  is_active
+    }
+    customers {
+        int         customer_id PK
+        varchar     full_name
+        varchar     phone       UK
+        varchar     email       UK "optional"
+        int         city_id     FK
+        timestamptz created_at
+    }
+    riders {
+        int     rider_id  PK
+        varchar full_name
+        varchar phone     UK
+        int     store_id  FK
+        date    joined_on
+        varchar status    "ACTIVE, ON_LEAVE, EXITED"
+    }
+    store_inventory {
+        int         store_id         PK, FK
+        int         product_id       PK, FK
+        int         quantity_on_hand
+        int         reorder_level
+        numeric     selling_price
+        timestamptz updated_at
+    }
+    orders {
+        int         order_id         PK
+        int         customer_id      FK
+        int         store_id         FK
+        int         rider_id         FK "NULL until assigned"
+        timestamptz placed_at
+        timestamptz packed_at
+        timestamptz picked_up_at
+        timestamptz delivered_at
+        smallint    promised_minutes
+        numeric     subtotal
+        numeric     delivery_fee
+        numeric     handling_fee
+        numeric     small_cart_fee
+        numeric     total_amount
+        varchar     payment_method
+        varchar     status
+    }
+    order_items {
+        int      order_id              PK, FK
+        int      product_id            PK, FK
+        smallint quantity_ordered
+        smallint quantity_delivered
+        numeric  unit_price
+        int      substitute_product_id FK "NULL = no substitute"
+    }
+    inventory_movements {
+        int         movement_id   PK
+        int         store_id      FK "together with product_id"
+        int         product_id    FK "points to store_inventory"
+        varchar     movement_type
+        int         quantity      "+ in, - out"
+        timestamptz moved_at
+    }
+```
+
+| Symbol in Mermaid | Meaning |
+|---|---|
+| `\|\|--o{` | exactly one ── zero or many |
+| `\|\|--\|{` | exactly one ── one or many (every order has at least 2 items) |
+| `\|o--o{` | zero or one ── zero or many (optional FK: rider, substitute) |
