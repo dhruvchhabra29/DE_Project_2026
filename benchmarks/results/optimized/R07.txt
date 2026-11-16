@@ -1,0 +1,36 @@
+=== R07 run 1 ===
+Sort  (cost=16.94..16.94 rows=1 width=26) (actual time=0.031..0.032 rows=4 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=13 read=2
+  ->  Index Scan using idx_orders_store_status on orders  (cost=0.29..16.93 rows=1 width=26) (actual time=0.018..0.022 rows=4 loops=1)
+        Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Buffers: shared hit=10 read=2
+Planning:
+  Buffers: shared hit=264
+Planning Time: 0.313 ms
+Execution Time: 0.041 ms
+=== R07 run 2 ===
+Sort  (cost=16.94..16.94 rows=1 width=26) (actual time=0.024..0.025 rows=4 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  Index Scan using idx_orders_store_status on orders  (cost=0.29..16.93 rows=1 width=26) (actual time=0.011..0.016 rows=4 loops=1)
+        Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Buffers: shared hit=12
+Planning:
+  Buffers: shared hit=264
+Planning Time: 0.306 ms
+Execution Time: 0.033 ms
+=== R07 run 3 ===
+Sort  (cost=16.94..16.94 rows=1 width=26) (actual time=0.024..0.025 rows=4 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  Index Scan using idx_orders_store_status on orders  (cost=0.29..16.93 rows=1 width=26) (actual time=0.013..0.016 rows=4 loops=1)
+        Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Buffers: shared hit=12
+Planning:
+  Buffers: shared hit=264
+Planning Time: 0.282 ms
+Execution Time: 0.033 ms

@@ -1,0 +1,96 @@
+=== W03 run 1 ===
+Update on orders o  (cost=1.19..16.31 rows=0 width=0) (actual time=0.214..0.216 rows=0 loops=1)
+  Buffers: shared hit=75 read=5 dirtied=6
+  InitPlan 4 (returns $3)
+    ->  Result  (cost=0.76..0.77 rows=1 width=4) (actual time=0.030..0.031 rows=1 loops=1)
+          Buffers: shared hit=4
+          InitPlan 3 (returns $2)
+            ->  Limit  (cost=0.42..0.76 rows=1 width=4) (actual time=0.029..0.029 rows=1 loops=1)
+                  Buffers: shared hit=4
+                  ->  Index Only Scan using idx_orders_status_order_id on orders  (cost=0.42..8.92 rows=25 width=4) (actual time=0.028..0.028 rows=1 loops=1)
+                        Index Cond: ((status = 'PACKING'::text) AND (order_id IS NOT NULL))
+                        Heap Fetches: 0
+                        Buffers: shared hit=4
+  ->  Index Scan using orders_pkey on orders o  (cost=0.42..15.54 rows=1 width=84) (actual time=0.051..0.052 rows=1 loops=1)
+        Index Cond: (order_id = $3)
+        Buffers: shared hit=11
+        SubPlan 2
+          ->  Result  (cost=7.09..7.10 rows=1 width=4) (actual time=0.008..0.009 rows=1 loops=1)
+                Buffers: shared hit=3
+                InitPlan 1 (returns $1)
+                  ->  Limit  (cost=0.28..7.09 rows=1 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                        Buffers: shared hit=3
+                        ->  Index Scan using riders_pkey on riders r  (cost=0.28..88.78 rows=13 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                              Index Cond: (rider_id IS NOT NULL)
+                              Filter: ((store_id = o.store_id) AND ((status)::text = 'ACTIVE'::text))
+                              Rows Removed by Filter: 36
+                              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=259
+Planning Time: 0.411 ms
+Trigger for constraint orders_rider_id_fkey: time=0.056 calls=1
+Execution Time: 0.315 ms
+=== W03 run 2 ===
+Update on orders o  (cost=1.19..16.31 rows=0 width=0) (actual time=0.207..0.208 rows=0 loops=1)
+  Buffers: shared hit=82 dirtied=1
+  InitPlan 4 (returns $3)
+    ->  Result  (cost=0.76..0.77 rows=1 width=4) (actual time=0.035..0.035 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 3 (returns $2)
+            ->  Limit  (cost=0.42..0.76 rows=1 width=4) (actual time=0.034..0.034 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_orders_status_order_id on orders  (cost=0.42..8.92 rows=25 width=4) (actual time=0.034..0.034 rows=1 loops=1)
+                        Index Cond: ((status = 'PACKING'::text) AND (order_id IS NOT NULL))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using orders_pkey on orders o  (cost=0.42..15.54 rows=1 width=84) (actual time=0.056..0.057 rows=1 loops=1)
+        Index Cond: (order_id = $3)
+        Buffers: shared hit=14
+        SubPlan 2
+          ->  Result  (cost=7.09..7.10 rows=1 width=4) (actual time=0.008..0.009 rows=1 loops=1)
+                Buffers: shared hit=3
+                InitPlan 1 (returns $1)
+                  ->  Limit  (cost=0.28..7.09 rows=1 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                        Buffers: shared hit=3
+                        ->  Index Scan using riders_pkey on riders r  (cost=0.28..88.78 rows=13 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                              Index Cond: (rider_id IS NOT NULL)
+                              Filter: ((store_id = o.store_id) AND ((status)::text = 'ACTIVE'::text))
+                              Rows Removed by Filter: 36
+                              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=259
+Planning Time: 0.480 ms
+Trigger for constraint orders_rider_id_fkey: time=0.053 calls=1
+Execution Time: 0.307 ms
+=== W03 run 3 ===
+Update on orders o  (cost=1.19..16.31 rows=0 width=0) (actual time=0.225..0.226 rows=0 loops=1)
+  Buffers: shared hit=82 dirtied=1
+  InitPlan 4 (returns $3)
+    ->  Result  (cost=0.76..0.77 rows=1 width=4) (actual time=0.033..0.033 rows=1 loops=1)
+          Buffers: shared hit=5
+          InitPlan 3 (returns $2)
+            ->  Limit  (cost=0.42..0.76 rows=1 width=4) (actual time=0.032..0.032 rows=1 loops=1)
+                  Buffers: shared hit=5
+                  ->  Index Only Scan using idx_orders_status_order_id on orders  (cost=0.42..8.92 rows=25 width=4) (actual time=0.032..0.032 rows=1 loops=1)
+                        Index Cond: ((status = 'PACKING'::text) AND (order_id IS NOT NULL))
+                        Heap Fetches: 1
+                        Buffers: shared hit=5
+  ->  Index Scan using orders_pkey on orders o  (cost=0.42..15.54 rows=1 width=84) (actual time=0.075..0.076 rows=1 loops=1)
+        Index Cond: (order_id = $3)
+        Buffers: shared hit=14
+        SubPlan 2
+          ->  Result  (cost=7.09..7.10 rows=1 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                Buffers: shared hit=3
+                InitPlan 1 (returns $1)
+                  ->  Limit  (cost=0.28..7.09 rows=1 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                        Buffers: shared hit=3
+                        ->  Index Scan using riders_pkey on riders r  (cost=0.28..88.78 rows=13 width=4) (actual time=0.008..0.008 rows=1 loops=1)
+                              Index Cond: (rider_id IS NOT NULL)
+                              Filter: ((store_id = o.store_id) AND ((status)::text = 'ACTIVE'::text))
+                              Rows Removed by Filter: 36
+                              Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=259
+Planning Time: 0.438 ms
+Trigger for constraint orders_rider_id_fkey: time=0.054 calls=1
+Execution Time: 0.326 ms

@@ -1,0 +1,69 @@
+=== R24 run 1 ===
+Sort  (cost=30.87..30.89 rows=7 width=20) (actual time=0.042..0.043 rows=7 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=12 read=3
+  ->  GroupAggregate  (cost=30.63..30.77 rows=7 width=20) (actual time=0.032..0.033 rows=7 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=9 read=3
+        ->  Sort  (cost=30.63..30.65 rows=7 width=8) (actual time=0.027..0.028 rows=7 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=9 read=3
+              ->  Bitmap Heap Scan on inventory_movements m  (cost=4.51..30.54 rows=7 width=8) (actual time=0.019..0.023 rows=7 loops=1)
+                    Recheck Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=6
+                    Buffers: shared hit=6 read=3
+                    ->  Bitmap Index Scan on idx_movements_store_type_moved  (cost=0.00..4.51 rows=7 width=0) (actual time=0.016..0.016 rows=7 loops=1)
+                          Index Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                          Buffers: shared read=3
+Planning:
+  Buffers: shared hit=163
+Planning Time: 0.246 ms
+Execution Time: 0.063 ms
+=== R24 run 2 ===
+Sort  (cost=30.87..30.89 rows=7 width=20) (actual time=0.034..0.035 rows=7 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  GroupAggregate  (cost=30.63..30.77 rows=7 width=20) (actual time=0.023..0.024 rows=7 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=12
+        ->  Sort  (cost=30.63..30.65 rows=7 width=8) (actual time=0.019..0.019 rows=7 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=12
+              ->  Bitmap Heap Scan on inventory_movements m  (cost=4.51..30.54 rows=7 width=8) (actual time=0.010..0.014 rows=7 loops=1)
+                    Recheck Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=6
+                    Buffers: shared hit=9
+                    ->  Bitmap Index Scan on idx_movements_store_type_moved  (cost=0.00..4.51 rows=7 width=0) (actual time=0.007..0.007 rows=7 loops=1)
+                          Index Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                          Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=163
+Planning Time: 0.267 ms
+Execution Time: 0.056 ms
+=== R24 run 3 ===
+Sort  (cost=30.87..30.89 rows=7 width=20) (actual time=0.031..0.032 rows=7 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=15
+  ->  GroupAggregate  (cost=30.63..30.77 rows=7 width=20) (actual time=0.021..0.022 rows=7 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=12
+        ->  Sort  (cost=30.63..30.65 rows=7 width=8) (actual time=0.018..0.018 rows=7 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=12
+              ->  Bitmap Heap Scan on inventory_movements m  (cost=4.51..30.54 rows=7 width=8) (actual time=0.009..0.013 rows=7 loops=1)
+                    Recheck Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=6
+                    Buffers: shared hit=9
+                    ->  Bitmap Index Scan on idx_movements_store_type_moved  (cost=0.00..4.51 rows=7 width=0) (actual time=0.007..0.007 rows=7 loops=1)
+                          Index Cond: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text) AND (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone))
+                          Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=163
+Planning Time: 0.221 ms
+Execution Time: 0.051 ms

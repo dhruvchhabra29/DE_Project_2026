@@ -1,0 +1,90 @@
+=== R19 run 1 ===
+Sort  (cost=3664.81..3668.56 rows=1500 width=36) (actual time=17.501..17.505 rows=125 loops=1)
+  Sort Key: (COALESCE(sum(oi.quantity_delivered), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 32kB
+  Buffers: shared hit=54315 read=170
+  ->  HashAggregate  (cost=3570.68..3585.68 rows=1500 width=36) (actual time=17.474..17.484 rows=125 loops=1)
+        Group Key: p.product_id
+        Batches: 1  Memory Usage: 81kB
+        Buffers: shared hit=54312 read=170
+        ->  Nested Loop Left Join  (cost=1.59..3289.43 rows=56250 width=30) (actual time=0.022..15.145 rows=56292 loops=1)
+              Buffers: shared hit=54312 read=170
+              ->  Hash Join  (cost=1.16..41.49 rows=125 width=28) (actual time=0.010..0.128 rows=125 loops=1)
+                    Hash Cond: (p.category_id = c.category_id)
+                    Buffers: shared hit=21
+                    ->  Seq Scan on products p  (cost=0.00..35.00 rows=1500 width=32) (actual time=0.002..0.052 rows=1500 loops=1)
+                          Buffers: shared hit=20
+                    ->  Hash  (cost=1.15..1.15 rows=1 width=4) (actual time=0.004..0.005 rows=1 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on categories c  (cost=0.00..1.15 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
+                                Filter: ((category_name)::text = 'Fruits & Vegetables'::text)
+                                Rows Removed by Filter: 11
+                                Buffers: shared hit=1
+              ->  Index Scan using idx_order_items_product_id on order_items oi  (cost=0.42..21.48 rows=450 width=10) (actual time=0.003..0.102 rows=450 loops=125)
+                    Index Cond: (product_id = p.product_id)
+                    Buffers: shared hit=54291 read=170
+Planning:
+  Buffers: shared hit=358
+Planning Time: 0.621 ms
+Execution Time: 17.546 ms
+=== R19 run 2 ===
+Sort  (cost=3664.81..3668.56 rows=1500 width=36) (actual time=17.244..17.249 rows=125 loops=1)
+  Sort Key: (COALESCE(sum(oi.quantity_delivered), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 32kB
+  Buffers: shared hit=54485
+  ->  HashAggregate  (cost=3570.68..3585.68 rows=1500 width=36) (actual time=17.218..17.228 rows=125 loops=1)
+        Group Key: p.product_id
+        Batches: 1  Memory Usage: 81kB
+        Buffers: shared hit=54482
+        ->  Nested Loop Left Join  (cost=1.59..3289.43 rows=56250 width=30) (actual time=0.015..14.891 rows=56292 loops=1)
+              Buffers: shared hit=54482
+              ->  Hash Join  (cost=1.16..41.49 rows=125 width=28) (actual time=0.010..0.123 rows=125 loops=1)
+                    Hash Cond: (p.category_id = c.category_id)
+                    Buffers: shared hit=21
+                    ->  Seq Scan on products p  (cost=0.00..35.00 rows=1500 width=32) (actual time=0.002..0.049 rows=1500 loops=1)
+                          Buffers: shared hit=20
+                    ->  Hash  (cost=1.15..1.15 rows=1 width=4) (actual time=0.004..0.004 rows=1 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on categories c  (cost=0.00..1.15 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
+                                Filter: ((category_name)::text = 'Fruits & Vegetables'::text)
+                                Rows Removed by Filter: 11
+                                Buffers: shared hit=1
+              ->  Index Scan using idx_order_items_product_id on order_items oi  (cost=0.42..21.48 rows=450 width=10) (actual time=0.002..0.100 rows=450 loops=125)
+                    Index Cond: (product_id = p.product_id)
+                    Buffers: shared hit=54461
+Planning:
+  Buffers: shared hit=358
+Planning Time: 0.601 ms
+Execution Time: 17.279 ms
+=== R19 run 3 ===
+Sort  (cost=3664.81..3668.56 rows=1500 width=36) (actual time=17.326..17.331 rows=125 loops=1)
+  Sort Key: (COALESCE(sum(oi.quantity_delivered), '0'::bigint)) DESC
+  Sort Method: quicksort  Memory: 32kB
+  Buffers: shared hit=54485
+  ->  HashAggregate  (cost=3570.68..3585.68 rows=1500 width=36) (actual time=17.299..17.309 rows=125 loops=1)
+        Group Key: p.product_id
+        Batches: 1  Memory Usage: 81kB
+        Buffers: shared hit=54482
+        ->  Nested Loop Left Join  (cost=1.59..3289.43 rows=56250 width=30) (actual time=0.016..14.955 rows=56292 loops=1)
+              Buffers: shared hit=54482
+              ->  Hash Join  (cost=1.16..41.49 rows=125 width=28) (actual time=0.010..0.122 rows=125 loops=1)
+                    Hash Cond: (p.category_id = c.category_id)
+                    Buffers: shared hit=21
+                    ->  Seq Scan on products p  (cost=0.00..35.00 rows=1500 width=32) (actual time=0.002..0.046 rows=1500 loops=1)
+                          Buffers: shared hit=20
+                    ->  Hash  (cost=1.15..1.15 rows=1 width=4) (actual time=0.005..0.005 rows=1 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on categories c  (cost=0.00..1.15 rows=1 width=4) (actual time=0.002..0.002 rows=1 loops=1)
+                                Filter: ((category_name)::text = 'Fruits & Vegetables'::text)
+                                Rows Removed by Filter: 11
+                                Buffers: shared hit=1
+              ->  Index Scan using idx_order_items_product_id on order_items oi  (cost=0.42..21.48 rows=450 width=10) (actual time=0.002..0.100 rows=450 loops=125)
+                    Index Cond: (product_id = p.product_id)
+                    Buffers: shared hit=54461
+Planning:
+  Buffers: shared hit=358
+Planning Time: 0.609 ms
+Execution Time: 17.364 ms
