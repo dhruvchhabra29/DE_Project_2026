@@ -26,7 +26,7 @@
 | Team Member | Dhruv Chhabra | 2501010143 | dhruvchhabra29 |
 | Team Member | Shweta Sharma | 2501010448 | Shweta-Sharma-sh |
 | Team Member | Krishna Agarwal | 2501010231 | anhsirkkrishna |
-*No Team Lead in our project everyone do their task as a team lead, can't define a single name.
+*No Team Lead in our project everyone do their task as a team lead, can't define a single name as a group lead.
 
 **Team No.:** T0033 · **Section:** E · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
 
