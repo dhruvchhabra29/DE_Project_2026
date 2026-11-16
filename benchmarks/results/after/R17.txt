@@ -1,0 +1,90 @@
+=== R17 run 1 ===
+Finalize GroupAggregate  (cost=62965.38..64052.99 rows=3650 width=44) (actual time=102.878..103.403 rows=0 loops=1)
+  Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+  Buffers: shared hit=376 read=42496
+  ->  Gather Merge  (cost=62965.38..63925.24 rows=7300 width=44) (actual time=102.878..103.402 rows=0 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=376 read=42496
+        ->  Partial GroupAggregate  (cost=61965.36..62082.61 rows=3650 width=44) (actual time=101.758..101.759 rows=0 loops=3)
+              Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+              Buffers: shared hit=376 read=42496
+              ->  Sort  (cost=61965.36..61980.99 rows=6250 width=15) (actual time=101.758..101.758 rows=0 loops=3)
+                    Sort Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=376 read=42496
+                    Worker 0:  Sort Method: quicksort  Memory: 25kB
+                    Worker 1:  Sort Method: quicksort  Memory: 25kB
+                    ->  Hash Join  (cost=4.70..61571.31 rows=6250 width=15) (actual time=101.736..101.737 rows=0 loops=3)
+                          Hash Cond: (o.store_id = s.store_id)
+                          Buffers: shared hit=288 read=42496
+                          ->  Parallel Seq Scan on orders o  (cost=0.00..61534.00 rows=6250 width=15) (actual time=101.736..101.736 rows=0 loops=3)
+                                Filter: (EXTRACT(year FROM placed_at) = '2026'::numeric)
+                                Rows Removed by Filter: 1000000
+                                Buffers: shared hit=288 read=42496
+                          ->  Hash  (cost=3.20..3.20 rows=120 width=8) (never executed)
+                                ->  Seq Scan on dark_stores s  (cost=0.00..3.20 rows=120 width=8) (never executed)
+Planning:
+  Buffers: shared hit=299 read=4
+Planning Time: 0.450 ms
+Execution Time: 103.434 ms
+=== R17 run 2 ===
+Finalize GroupAggregate  (cost=62965.38..64052.99 rows=3650 width=44) (actual time=105.570..106.141 rows=0 loops=1)
+  Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+  Buffers: shared hit=472 read=42400
+  ->  Gather Merge  (cost=62965.38..63925.24 rows=7300 width=44) (actual time=105.570..106.138 rows=0 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=472 read=42400
+        ->  Partial GroupAggregate  (cost=61965.36..62082.61 rows=3650 width=44) (actual time=104.400..104.401 rows=0 loops=3)
+              Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+              Buffers: shared hit=472 read=42400
+              ->  Sort  (cost=61965.36..61980.99 rows=6250 width=15) (actual time=104.400..104.400 rows=0 loops=3)
+                    Sort Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=472 read=42400
+                    Worker 0:  Sort Method: quicksort  Memory: 25kB
+                    Worker 1:  Sort Method: quicksort  Memory: 25kB
+                    ->  Hash Join  (cost=4.70..61571.31 rows=6250 width=15) (actual time=104.379..104.379 rows=0 loops=3)
+                          Hash Cond: (o.store_id = s.store_id)
+                          Buffers: shared hit=384 read=42400
+                          ->  Parallel Seq Scan on orders o  (cost=0.00..61534.00 rows=6250 width=15) (actual time=104.379..104.379 rows=0 loops=3)
+                                Filter: (EXTRACT(year FROM placed_at) = '2026'::numeric)
+                                Rows Removed by Filter: 1000000
+                                Buffers: shared hit=384 read=42400
+                          ->  Hash  (cost=3.20..3.20 rows=120 width=8) (never executed)
+                                ->  Seq Scan on dark_stores s  (cost=0.00..3.20 rows=120 width=8) (never executed)
+Planning:
+  Buffers: shared hit=303
+Planning Time: 0.428 ms
+Execution Time: 106.167 ms
+=== R17 run 3 ===
+Finalize GroupAggregate  (cost=62965.38..64052.99 rows=3650 width=44) (actual time=106.522..107.087 rows=0 loops=1)
+  Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+  Buffers: shared hit=568 read=42304
+  ->  Gather Merge  (cost=62965.38..63925.24 rows=7300 width=44) (actual time=106.522..107.087 rows=0 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=568 read=42304
+        ->  Partial GroupAggregate  (cost=61965.36..62082.61 rows=3650 width=44) (actual time=105.358..105.359 rows=0 loops=3)
+              Group Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+              Buffers: shared hit=568 read=42304
+              ->  Sort  (cost=61965.36..61980.99 rows=6250 width=15) (actual time=105.358..105.359 rows=0 loops=3)
+                    Sort Key: s.city_id, (date_trunc('month'::text, o.placed_at))
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=568 read=42304
+                    Worker 0:  Sort Method: quicksort  Memory: 25kB
+                    Worker 1:  Sort Method: quicksort  Memory: 25kB
+                    ->  Hash Join  (cost=4.70..61571.31 rows=6250 width=15) (actual time=105.337..105.337 rows=0 loops=3)
+                          Hash Cond: (o.store_id = s.store_id)
+                          Buffers: shared hit=480 read=42304
+                          ->  Parallel Seq Scan on orders o  (cost=0.00..61534.00 rows=6250 width=15) (actual time=105.336..105.337 rows=0 loops=3)
+                                Filter: (EXTRACT(year FROM placed_at) = '2026'::numeric)
+                                Rows Removed by Filter: 1000000
+                                Buffers: shared hit=480 read=42304
+                          ->  Hash  (cost=3.20..3.20 rows=120 width=8) (never executed)
+                                ->  Seq Scan on dark_stores s  (cost=0.00..3.20 rows=120 width=8) (never executed)
+Planning:
+  Buffers: shared hit=303
+Planning Time: 0.445 ms
+Execution Time: 107.114 ms

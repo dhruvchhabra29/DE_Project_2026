@@ -1,0 +1,84 @@
+=== R10 run 1 ===
+Sort  (cost=16.96..16.96 rows=1 width=26) (actual time=0.021..0.022 rows=0 loops=1)
+  Sort Key: ((- sum(m.quantity))) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6 read=3
+  ->  GroupAggregate  (cost=16.92..16.95 rows=1 width=26) (actual time=0.012..0.013 rows=0 loops=1)
+        Group Key: c.category_name, m.movement_type
+        Buffers: shared hit=3 read=3
+        ->  Sort  (cost=16.92..16.93 rows=1 width=22) (actual time=0.012..0.012 rows=0 loops=1)
+              Sort Key: c.category_name, m.movement_type
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=3 read=3
+              ->  Nested Loop  (cost=0.85..16.91 rows=1 width=22) (actual time=0.008..0.008 rows=0 loops=1)
+                    Buffers: shared read=3
+                    ->  Nested Loop  (cost=0.71..16.76 rows=1 width=16) (actual time=0.008..0.008 rows=0 loops=1)
+                          Buffers: shared read=3
+                          ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.45 rows=1 width=16) (actual time=0.008..0.008 rows=0 loops=1)
+                                Index Cond: ((moved_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (moved_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((movement_type)::text = ANY ('{EXPIRY,DAMAGE}'::text[]))
+                                Buffers: shared read=3
+                          ->  Index Scan using products_pkey on products p  (cost=0.29..8.30 rows=1 width=8) (never executed)
+                                Index Cond: (product_id = m.product_id)
+                    ->  Index Scan using categories_pkey on categories c  (cost=0.14..0.15 rows=1 width=14) (never executed)
+                          Index Cond: (category_id = p.category_id)
+Planning:
+  Buffers: shared hit=366 read=4
+Planning Time: 1.171 ms
+Execution Time: 0.040 ms
+=== R10 run 2 ===
+Sort  (cost=16.96..16.96 rows=1 width=26) (actual time=0.016..0.017 rows=0 loops=1)
+  Sort Key: ((- sum(m.quantity))) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=9
+  ->  GroupAggregate  (cost=16.92..16.95 rows=1 width=26) (actual time=0.008..0.008 rows=0 loops=1)
+        Group Key: c.category_name, m.movement_type
+        Buffers: shared hit=6
+        ->  Sort  (cost=16.92..16.93 rows=1 width=22) (actual time=0.007..0.007 rows=0 loops=1)
+              Sort Key: c.category_name, m.movement_type
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6
+              ->  Nested Loop  (cost=0.85..16.91 rows=1 width=22) (actual time=0.003..0.003 rows=0 loops=1)
+                    Buffers: shared hit=3
+                    ->  Nested Loop  (cost=0.71..16.76 rows=1 width=16) (actual time=0.003..0.003 rows=0 loops=1)
+                          Buffers: shared hit=3
+                          ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.45 rows=1 width=16) (actual time=0.003..0.003 rows=0 loops=1)
+                                Index Cond: ((moved_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (moved_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((movement_type)::text = ANY ('{EXPIRY,DAMAGE}'::text[]))
+                                Buffers: shared hit=3
+                          ->  Index Scan using products_pkey on products p  (cost=0.29..8.30 rows=1 width=8) (never executed)
+                                Index Cond: (product_id = m.product_id)
+                    ->  Index Scan using categories_pkey on categories c  (cost=0.14..0.15 rows=1 width=14) (never executed)
+                          Index Cond: (category_id = p.category_id)
+Planning:
+  Buffers: shared hit=370
+Planning Time: 0.411 ms
+Execution Time: 0.035 ms
+=== R10 run 3 ===
+Sort  (cost=16.96..16.96 rows=1 width=26) (actual time=0.015..0.016 rows=0 loops=1)
+  Sort Key: ((- sum(m.quantity))) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=9
+  ->  GroupAggregate  (cost=16.92..16.95 rows=1 width=26) (actual time=0.007..0.007 rows=0 loops=1)
+        Group Key: c.category_name, m.movement_type
+        Buffers: shared hit=6
+        ->  Sort  (cost=16.92..16.93 rows=1 width=22) (actual time=0.007..0.007 rows=0 loops=1)
+              Sort Key: c.category_name, m.movement_type
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6
+              ->  Nested Loop  (cost=0.85..16.91 rows=1 width=22) (actual time=0.003..0.004 rows=0 loops=1)
+                    Buffers: shared hit=3
+                    ->  Nested Loop  (cost=0.71..16.76 rows=1 width=16) (actual time=0.003..0.003 rows=0 loops=1)
+                          Buffers: shared hit=3
+                          ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.45 rows=1 width=16) (actual time=0.003..0.003 rows=0 loops=1)
+                                Index Cond: ((moved_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (moved_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                                Filter: ((movement_type)::text = ANY ('{EXPIRY,DAMAGE}'::text[]))
+                                Buffers: shared hit=3
+                          ->  Index Scan using products_pkey on products p  (cost=0.29..8.30 rows=1 width=8) (never executed)
+                                Index Cond: (product_id = m.product_id)
+                    ->  Index Scan using categories_pkey on categories c  (cost=0.14..0.15 rows=1 width=14) (never executed)
+                          Index Cond: (category_id = p.category_id)
+Planning:
+  Buffers: shared hit=370
+Planning Time: 0.453 ms
+Execution Time: 0.032 ms

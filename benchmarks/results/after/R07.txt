@@ -1,0 +1,48 @@
+=== R07 run 1 ===
+Sort  (cost=73.14..73.18 rows=15 width=26) (actual time=0.123..0.125 rows=80 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 29kB
+  Buffers: shared hit=9 read=47
+  ->  Bitmap Heap Scan on orders  (cost=13.44..72.84 rows=15 width=26) (actual time=0.021..0.107 rows=80 loops=1)
+        Recheck Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Heap Blocks: exact=44
+        Buffers: shared hit=6 read=47
+        ->  Bitmap Index Scan on idx_orders_store_status  (cost=0.00..13.44 rows=15 width=0) (actual time=0.014..0.014 rows=80 loops=1)
+              Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Buffers: shared hit=6 read=3
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.312 ms
+Execution Time: 0.144 ms
+=== R07 run 2 ===
+Sort  (cost=73.14..73.18 rows=15 width=26) (actual time=0.076..0.078 rows=80 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 29kB
+  Buffers: shared hit=56
+  ->  Bitmap Heap Scan on orders  (cost=13.44..72.84 rows=15 width=26) (actual time=0.014..0.060 rows=80 loops=1)
+        Recheck Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Heap Blocks: exact=44
+        Buffers: shared hit=53
+        ->  Bitmap Index Scan on idx_orders_store_status  (cost=0.00..13.44 rows=15 width=0) (actual time=0.010..0.010 rows=80 loops=1)
+              Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.309 ms
+Execution Time: 0.096 ms
+=== R07 run 3 ===
+Sort  (cost=73.14..73.18 rows=15 width=26) (actual time=0.074..0.076 rows=80 loops=1)
+  Sort Key: placed_at
+  Sort Method: quicksort  Memory: 29kB
+  Buffers: shared hit=56
+  ->  Bitmap Heap Scan on orders  (cost=13.44..72.84 rows=15 width=26) (actual time=0.014..0.058 rows=80 loops=1)
+        Recheck Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+        Heap Blocks: exact=44
+        Buffers: shared hit=53
+        ->  Bitmap Index Scan on idx_orders_store_status  (cost=0.00..13.44 rows=15 width=0) (actual time=0.010..0.010 rows=80 loops=1)
+              Index Cond: ((store_id = 43) AND ((status)::text = ANY ('{PLACED,PACKING,OUT_FOR_DELIVERY}'::text[])))
+              Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.320 ms
+Execution Time: 0.094 ms

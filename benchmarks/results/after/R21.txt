@@ -1,0 +1,57 @@
+=== R21 run 1 ===
+Sort  (cost=50.59..50.60 rows=1 width=16) (actual time=0.626..0.627 rows=0 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=19 read=44
+  ->  Nested Loop Anti Join  (cost=0.43..50.58 rows=1 width=16) (actual time=0.618..0.618 rows=0 loops=1)
+        Buffers: shared hit=16 read=44
+        ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.104..0.539 rows=14 loops=1)
+              Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 1786
+              Buffers: shared read=17
+        ->  Index Only Scan using idx_orders_rider_placed on orders o  (cost=0.43..46.20 rows=1627 width=4) (actual time=0.005..0.005 rows=1 loops=14)
+              Index Cond: ((rider_id = r.rider_id) AND (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Buffers: shared hit=16 read=27
+Planning:
+  Buffers: shared hit=293 read=14
+Planning Time: 1.406 ms
+Execution Time: 0.643 ms
+=== R21 run 2 ===
+Sort  (cost=50.59..50.60 rows=1 width=16) (actual time=0.125..0.126 rows=0 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=63
+  ->  Nested Loop Anti Join  (cost=0.43..50.58 rows=1 width=16) (actual time=0.117..0.117 rows=0 loops=1)
+        Buffers: shared hit=60
+        ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.004..0.063 rows=14 loops=1)
+              Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 1786
+              Buffers: shared hit=17
+        ->  Index Only Scan using idx_orders_rider_placed on orders o  (cost=0.43..46.20 rows=1627 width=4) (actual time=0.004..0.004 rows=1 loops=14)
+              Index Cond: ((rider_id = r.rider_id) AND (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Buffers: shared hit=43
+Planning:
+  Buffers: shared hit=307
+Planning Time: 0.422 ms
+Execution Time: 0.142 ms
+=== R21 run 3 ===
+Sort  (cost=50.59..50.60 rows=1 width=16) (actual time=0.116..0.117 rows=0 loops=1)
+  Sort Key: r.rider_id
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=63
+  ->  Nested Loop Anti Join  (cost=0.43..50.58 rows=1 width=16) (actual time=0.109..0.109 rows=0 loops=1)
+        Buffers: shared hit=60
+        ->  Seq Scan on riders r  (cost=0.00..44.00 rows=13 width=16) (actual time=0.003..0.060 rows=14 loops=1)
+              Filter: ((store_id = 43) AND ((status)::text = 'ACTIVE'::text))
+              Rows Removed by Filter: 1786
+              Buffers: shared hit=17
+        ->  Index Only Scan using idx_orders_rider_placed on orders o  (cost=0.43..46.20 rows=1627 width=4) (actual time=0.003..0.003 rows=1 loops=14)
+              Index Cond: ((rider_id = r.rider_id) AND (placed_at >= '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Buffers: shared hit=43
+Planning:
+  Buffers: shared hit=307
+Planning Time: 0.398 ms
+Execution Time: 0.132 ms

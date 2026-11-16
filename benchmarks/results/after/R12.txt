@@ -1,0 +1,1450 @@
+=== R12 run 1 ===
+Limit  (cost=137383.32..137383.35 rows=10 width=12) (actual time=27.940..28.826 rows=10 loops=1)
+  Buffers: shared hit=49949 read=21158 written=7
+  ->  Sort  (cost=137383.32..137383.82 rows=200 width=12) (actual time=27.940..28.825 rows=10 loops=1)
+        Sort Key: (count(*)) DESC
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=49949 read=21158 written=7
+        ->  Finalize GroupAggregate  (cost=137328.33..137379.00 rows=200 width=12) (actual time=27.499..28.735 rows=2510 loops=1)
+              Group Key: b.product_id
+              Buffers: shared hit=49946 read=21158 written=7
+              ->  Gather Merge  (cost=137328.33..137375.00 rows=400 width=12) (actual time=27.497..28.535 rows=2632 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=49946 read=21158 written=7
+                    ->  Sort  (cost=136328.31..136328.81 rows=200 width=12) (actual time=24.571..24.599 rows=877 loops=3)
+                          Sort Key: b.product_id
+                          Sort Method: quicksort  Memory: 61kB
+                          Buffers: shared hit=49946 read=21158 written=7
+                          Worker 0:  Sort Method: quicksort  Memory: 58kB
+                          Worker 1:  Sort Method: quicksort  Memory: 57kB
+                          ->  Partial HashAggregate  (cost=136318.66..136320.66 rows=200 width=12) (actual time=24.452..24.503 rows=877 loops=3)
+                                Group Key: b.product_id
+                                Batches: 1  Memory Usage: 145kB
+                                Buffers: shared hit=49932 read=21158 written=7
+                                Worker 0:  Batches: 1  Memory Usage: 145kB
+                                Worker 1:  Batches: 1  Memory Usage: 121kB
+                                ->  Nested Loop  (cost=5.00..44244.67 rows=18414799 width=4) (actual time=0.319..24.216 rows=897 loops=3)
+                                      Buffers: shared hit=49932 read=21158 written=7
+                                      ->  Parallel Append  (cost=4.58..2641.87 rows=284 width=8) (actual time=0.033..0.893 rows=217 loops=3)
+                                            Buffers: shared hit=54 read=722 written=1
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_05 a_17  (cost=4.58..79.82 rows=12 width=8) (actual time=0.037..0.082 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=21
+                                                  ->  Bitmap Index Scan on order_items_2029_05_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.031..0.031 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_01 a_13  (cost=4.58..79.82 rows=12 width=8) (actual time=0.040..0.099 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=26
+                                                  ->  Bitmap Index Scan on order_items_2029_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.032..0.032 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_03 a_3  (cost=4.58..79.82 rows=12 width=8) (actual time=0.040..0.088 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_03_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.034..0.034 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_01 a_1  (cost=4.58..79.82 rows=12 width=8) (actual time=0.038..0.096 rows=23 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=26
+                                                  ->  Bitmap Index Scan on order_items_2028_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.032..0.033 rows=23 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_08 a_8  (cost=4.58..79.82 rows=12 width=8) (actual time=0.037..0.085 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_08_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.031..0.031 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_10 a_22  (cost=4.58..79.82 rows=12 width=8) (actual time=0.037..0.093 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=25
+                                                  ->  Bitmap Index Scan on order_items_2029_10_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.032..0.032 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_07 a_31  (cost=4.58..79.82 rows=12 width=8) (actual time=0.038..0.097 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=27
+                                                  ->  Bitmap Index Scan on order_items_2030_07_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.030..0.030 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_03 a_27  (cost=4.56..72.31 rows=11 width=8) (actual time=0.037..0.085 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=21
+                                                  ->  Bitmap Index Scan on order_items_2030_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_07 a_19  (cost=4.56..72.31 rows=11 width=8) (actual time=0.042..0.080 rows=15 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=18
+                                                  ->  Bitmap Index Scan on order_items_2029_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.034..0.034 rows=15 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_12 a_24  (cost=4.56..72.31 rows=11 width=8) (actual time=0.043..0.093 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2029_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.037..0.037 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_01 a_25  (cost=4.56..72.31 rows=11 width=8) (actual time=0.039..0.090 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=24
+                                                  ->  Bitmap Index Scan on order_items_2030_01_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.034..0.034 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_09 a_33  (cost=4.56..72.31 rows=11 width=8) (actual time=0.039..0.081 rows=13 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=16
+                                                  ->  Bitmap Index Scan on order_items_2030_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.032..0.032 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_04 a_4  (cost=4.56..72.30 rows=11 width=8) (actual time=0.040..0.077 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2028_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.035..0.035 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_12 a_12  (cost=4.56..72.30 rows=11 width=8) (actual time=0.037..0.089 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_08 a_20  (cost=4.56..72.30 rows=11 width=8) (actual time=0.067..0.110 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=21 written=1
+                                                  ->  Bitmap Index Scan on order_items_2029_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.061..0.061 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3 written=1
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_06 a_6  (cost=4.56..72.30 rows=11 width=8) (actual time=0.033..0.082 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.028..0.028 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_04 a_28  (cost=4.56..72.30 rows=11 width=8) (actual time=0.040..0.073 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.034..0.034 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_10 a_34  (cost=4.56..72.30 rows=11 width=8) (actual time=0.035..0.081 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2030_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_10 a_10  (cost=4.56..72.30 rows=11 width=8) (actual time=0.037..0.083 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.032..0.032 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_04 a_16  (cost=4.56..72.30 rows=11 width=8) (actual time=0.036..0.073 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=21
+                                                  ->  Bitmap Index Scan on order_items_2029_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_11 a_23  (cost=4.56..72.30 rows=11 width=8) (actual time=0.036..0.068 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_11 a_35  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.024 rows=4 loops=3)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=5
+                                                  Buffers: shared read=16
+                                                  ->  Bitmap Index Scan on order_items_2030_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.024..0.024 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_06 a_30  (cost=4.56..72.30 rows=11 width=8) (actual time=0.013..0.042 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2030_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_05 a_5  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.042 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2028_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_11 a_11  (cost=4.56..72.30 rows=11 width=8) (actual time=0.013..0.057 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.008..0.008 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_06 a_18  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.038 rows=11 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=11
+                                                  Buffers: shared read=14
+                                                  ->  Bitmap Index Scan on order_items_2029_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=11 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_09 a_21  (cost=4.56..72.30 rows=11 width=8) (actual time=0.018..0.052 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2029_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_07 a_7  (cost=4.56..72.30 rows=11 width=8) (actual time=0.018..0.074 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=22
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.012..0.012 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_09 a_9  (cost=4.56..72.30 rows=11 width=8) (actual time=0.018..0.064 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared read=24
+                                                  ->  Bitmap Index Scan on order_items_2028_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.012 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_02 a_26  (cost=4.56..72.30 rows=11 width=8) (actual time=0.018..0.066 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_02_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_03 a_15  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.057 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.012 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_05 a_29  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.068 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared read=24
+                                                  ->  Bitmap Index Scan on order_items_2030_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.012 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_12 a_36  (cost=4.56..72.30 rows=11 width=8) (actual time=0.016..0.053 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared hit=20 read=3
+                                                  ->  Bitmap Index Scan on order_items_2030_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.012 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_08 a_32  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.045 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=18
+                                                  Buffers: shared hit=18 read=3
+                                                  ->  Bitmap Index Scan on order_items_2030_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_02 a_2  (cost=4.55..64.79 rows=9 width=8) (actual time=0.014..0.052 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2028_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.009..0.009 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_02 a_14  (cost=4.55..64.78 rows=9 width=8) (actual time=0.022..0.039 rows=9 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=8
+                                                  Buffers: shared read=11
+                                                  ->  Bitmap Index Scan on order_items_2029_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.016..0.016 rows=9 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                      ->  Append  (cost=0.42..144.69 rows=180 width=8) (actual time=0.055..0.107 rows=4 loops=650)
+                                            Buffers: shared hit=49878 read=20436 written=6
+                                            ->  Index Only Scan using order_items_2028_01_pkey on order_items_2028_01 b_1  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1379 read=574 written=2
+                                            ->  Index Only Scan using order_items_2028_02_pkey on order_items_2028_02 b_2  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1394 read=559
+                                            ->  Index Only Scan using order_items_2028_03_pkey on order_items_2028_03 b_3  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1366 read=587
+                                            ->  Index Only Scan using order_items_2028_04_pkey on order_items_2028_04 b_4  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1386 read=568
+                                            ->  Index Only Scan using order_items_2028_05_pkey on order_items_2028_05 b_5  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1397 read=556
+                                            ->  Index Only Scan using order_items_2028_06_pkey on order_items_2028_06 b_6  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1392 read=561
+                                            ->  Index Only Scan using order_items_2028_07_pkey on order_items_2028_07 b_7  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1385 read=568
+                                            ->  Index Only Scan using order_items_2028_08_pkey on order_items_2028_08 b_8  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1376 read=577
+                                            ->  Index Only Scan using order_items_2028_09_pkey on order_items_2028_09 b_9  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1387 read=566
+                                            ->  Index Only Scan using order_items_2028_10_pkey on order_items_2028_10 b_10  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1386 read=567
+                                            ->  Index Only Scan using order_items_2028_11_pkey on order_items_2028_11 b_11  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563
+                                            ->  Index Only Scan using order_items_2028_12_pkey on order_items_2028_12 b_12  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1388 read=566
+                                            ->  Index Only Scan using order_items_2029_01_pkey on order_items_2029_01 b_13  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1372 read=581 written=1
+                                            ->  Index Only Scan using order_items_2029_02_pkey on order_items_2029_02 b_14  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1394 read=559
+                                            ->  Index Only Scan using order_items_2029_03_pkey on order_items_2029_03 b_15  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1381 read=572
+                                            ->  Index Only Scan using order_items_2029_04_pkey on order_items_2029_04 b_16  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563
+                                            ->  Index Only Scan using order_items_2029_05_pkey on order_items_2029_05 b_17  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1381 read=572
+                                            ->  Index Only Scan using order_items_2029_06_pkey on order_items_2029_06 b_18  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563
+                                            ->  Index Only Scan using order_items_2029_07_pkey on order_items_2029_07 b_19  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563
+                                            ->  Index Only Scan using order_items_2029_08_pkey on order_items_2029_08 b_20  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563
+                                            ->  Index Only Scan using order_items_2029_09_pkey on order_items_2029_09 b_21  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1393 read=560
+                                            ->  Index Only Scan using order_items_2029_10_pkey on order_items_2029_10 b_22  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1383 read=571
+                                            ->  Index Only Scan using order_items_2029_11_pkey on order_items_2029_11 b_23  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1388 read=565
+                                            ->  Index Only Scan using order_items_2029_12_pkey on order_items_2029_12 b_24  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1382 read=571
+                                            ->  Index Only Scan using order_items_2030_01_pkey on order_items_2030_01 b_25  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1376 read=577
+                                            ->  Index Only Scan using order_items_2030_02_pkey on order_items_2030_02 b_26  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1374 read=579
+                                            ->  Index Only Scan using order_items_2030_03_pkey on order_items_2030_03 b_27  (cost=0.42..4.00 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1398 read=555 written=1
+                                            ->  Index Only Scan using order_items_2030_04_pkey on order_items_2030_04 b_28  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1389 read=565
+                                            ->  Index Only Scan using order_items_2030_05_pkey on order_items_2030_05 b_29  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1388 read=565 written=1
+                                            ->  Index Only Scan using order_items_2030_06_pkey on order_items_2030_06 b_30  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1390 read=563 written=1
+                                            ->  Index Only Scan using order_items_2030_07_pkey on order_items_2030_07 b_31  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1375 read=578
+                                            ->  Index Only Scan using order_items_2030_08_pkey on order_items_2030_08 b_32  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1391 read=562
+                                            ->  Index Only Scan using order_items_2030_09_pkey on order_items_2030_09 b_33  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1385 read=568
+                                            ->  Index Only Scan using order_items_2030_10_pkey on order_items_2030_10 b_34  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1386 read=567
+                                            ->  Index Only Scan using order_items_2030_11_pkey on order_items_2030_11 b_35  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1380 read=575
+                                            ->  Index Only Scan using order_items_2030_12_pkey on order_items_2030_12 b_36  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1386 read=567
+Planning:
+  Buffers: shared hit=2056 read=119 dirtied=20
+Planning Time: 4.066 ms
+Execution Time: 29.053 ms
+=== R12 run 2 ===
+Limit  (cost=137383.32..137383.35 rows=10 width=12) (actual time=26.167..27.088 rows=10 loops=1)
+  Buffers: shared hit=52084 read=19023 written=14
+  ->  Sort  (cost=137383.32..137383.82 rows=200 width=12) (actual time=26.166..27.087 rows=10 loops=1)
+        Sort Key: (count(*)) DESC
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=52084 read=19023 written=14
+        ->  Finalize GroupAggregate  (cost=137328.33..137379.00 rows=200 width=12) (actual time=25.736..26.995 rows=2510 loops=1)
+              Group Key: b.product_id
+              Buffers: shared hit=52081 read=19023 written=14
+              ->  Gather Merge  (cost=137328.33..137375.00 rows=400 width=12) (actual time=25.734..26.808 rows=2631 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=52081 read=19023 written=14
+                    ->  Sort  (cost=136328.31..136328.81 rows=200 width=12) (actual time=22.925..22.953 rows=877 loops=3)
+                          Sort Key: b.product_id
+                          Sort Method: quicksort  Memory: 62kB
+                          Buffers: shared hit=52081 read=19023 written=14
+                          Worker 0:  Sort Method: quicksort  Memory: 57kB
+                          Worker 1:  Sort Method: quicksort  Memory: 57kB
+                          ->  Partial HashAggregate  (cost=136318.66..136320.66 rows=200 width=12) (actual time=22.810..22.858 rows=877 loops=3)
+                                Group Key: b.product_id
+                                Batches: 1  Memory Usage: 145kB
+                                Buffers: shared hit=52067 read=19023 written=14
+                                Worker 0:  Batches: 1  Memory Usage: 145kB
+                                Worker 1:  Batches: 1  Memory Usage: 121kB
+                                ->  Nested Loop  (cost=5.00..44244.67 rows=18414799 width=4) (actual time=0.252..22.671 rows=897 loops=3)
+                                      Buffers: shared hit=52067 read=19023 written=14
+                                      ->  Parallel Append  (cost=4.58..2641.87 rows=284 width=8) (actual time=0.036..0.853 rows=217 loops=3)
+                                            Buffers: shared hit=23 read=753
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_05 a_17  (cost=4.58..79.82 rows=12 width=8) (actual time=0.044..0.090 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_05_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.038..0.038 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_01 a_13  (cost=4.58..79.82 rows=12 width=8) (actual time=0.040..0.100 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=25
+                                                  ->  Bitmap Index Scan on order_items_2029_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.033..0.033 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_03 a_3  (cost=4.58..79.82 rows=12 width=8) (actual time=0.043..0.090 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_03_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.037..0.037 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_01 a_1  (cost=4.58..79.82 rows=12 width=8) (actual time=0.037..0.095 rows=23 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.031..0.031 rows=23 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_08 a_8  (cost=4.58..79.82 rows=12 width=8) (actual time=0.042..0.087 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=21
+                                                  ->  Bitmap Index Scan on order_items_2028_08_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.036..0.036 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_10 a_22  (cost=4.58..79.82 rows=12 width=8) (actual time=0.033..0.088 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=25
+                                                  ->  Bitmap Index Scan on order_items_2029_10_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.028..0.028 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_07 a_31  (cost=4.58..79.82 rows=12 width=8) (actual time=0.034..0.089 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=27
+                                                  ->  Bitmap Index Scan on order_items_2030_07_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.028..0.028 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_03 a_27  (cost=4.56..72.31 rows=11 width=8) (actual time=0.034..0.074 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=21
+                                                  ->  Bitmap Index Scan on order_items_2030_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_07 a_19  (cost=4.56..72.31 rows=11 width=8) (actual time=0.036..0.069 rows=15 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=19
+                                                  ->  Bitmap Index Scan on order_items_2029_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=15 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_12 a_24  (cost=4.56..72.31 rows=11 width=8) (actual time=0.036..0.083 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=24
+                                                  ->  Bitmap Index Scan on order_items_2029_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_01 a_25  (cost=4.56..72.31 rows=11 width=8) (actual time=0.036..0.085 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2030_01_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_09 a_33  (cost=4.56..72.31 rows=11 width=8) (actual time=0.039..0.071 rows=13 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2030_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.033..0.033 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_04 a_4  (cost=4.56..72.30 rows=11 width=8) (actual time=0.038..0.075 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2028_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.033..0.033 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_12 a_12  (cost=4.56..72.30 rows=11 width=8) (actual time=0.036..0.083 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=24
+                                                  ->  Bitmap Index Scan on order_items_2028_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_08 a_20  (cost=4.56..72.30 rows=11 width=8) (actual time=0.035..0.078 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=22
+                                                  ->  Bitmap Index Scan on order_items_2029_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_06 a_6  (cost=4.56..72.30 rows=11 width=8) (actual time=0.035..0.076 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_04 a_28  (cost=4.56..72.30 rows=11 width=8) (actual time=0.032..0.065 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2030_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.027..0.027 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_10 a_34  (cost=4.56..72.30 rows=11 width=8) (actual time=0.032..0.077 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=24
+                                                  ->  Bitmap Index Scan on order_items_2030_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.026..0.026 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_10 a_10  (cost=4.56..72.30 rows=11 width=8) (actual time=0.034..0.076 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=24
+                                                  ->  Bitmap Index Scan on order_items_2028_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.028..0.028 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_04 a_16  (cost=4.56..72.30 rows=11 width=8) (actual time=0.033..0.070 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.028..0.028 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_11 a_23  (cost=4.56..72.30 rows=11 width=8) (actual time=0.013..0.023 rows=5 loops=3)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2029_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_11 a_35  (cost=4.56..72.30 rows=11 width=8) (actual time=0.021..0.035 rows=6 loops=2)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=9
+                                                  Buffers: shared read=16
+                                                  ->  Bitmap Index Scan on order_items_2030_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.023..0.023 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_06 a_30  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.045 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2030_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_05 a_5  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.043 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2028_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_11 a_11  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.060 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_06 a_18  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.039 rows=11 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=11
+                                                  Buffers: shared read=14
+                                                  ->  Bitmap Index Scan on order_items_2029_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=11 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_09 a_21  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.050 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2029_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_07 a_7  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.061 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=22
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_09 a_9  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.068 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared read=24
+                                                  ->  Bitmap Index Scan on order_items_2028_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_02 a_26  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.058 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_02_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_03 a_15  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.054 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_05 a_29  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.064 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2030_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_12 a_36  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.071 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared hit=1 read=22
+                                                  ->  Bitmap Index Scan on order_items_2030_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_08 a_32  (cost=4.56..72.30 rows=11 width=8) (actual time=0.013..0.055 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=18
+                                                  Buffers: shared hit=1 read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_02 a_2  (cost=4.55..64.79 rows=9 width=8) (actual time=0.012..0.044 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2028_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.009..0.009 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_02 a_14  (cost=4.55..64.78 rows=9 width=8) (actual time=0.023..0.040 rows=9 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=8
+                                                  Buffers: shared hit=1 read=10
+                                                  ->  Bitmap Index Scan on order_items_2029_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.016..0.016 rows=9 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                      ->  Append  (cost=0.42..144.69 rows=180 width=8) (actual time=0.051..0.100 rows=4 loops=650)
+                                            Buffers: shared hit=52044 read=18270 written=14
+                                            ->  Index Only Scan using order_items_2028_01_pkey on order_items_2028_01 b_1  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1446 read=507 written=1
+                                            ->  Index Only Scan using order_items_2028_02_pkey on order_items_2028_02 b_2  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1452 read=501 written=2
+                                            ->  Index Only Scan using order_items_2028_03_pkey on order_items_2028_03 b_3  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1424 read=529 written=2
+                                            ->  Index Only Scan using order_items_2028_04_pkey on order_items_2028_04 b_4  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1445 read=509 written=1
+                                            ->  Index Only Scan using order_items_2028_05_pkey on order_items_2028_05 b_5  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1469 read=484
+                                            ->  Index Only Scan using order_items_2028_06_pkey on order_items_2028_06 b_6  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1455 read=498
+                                            ->  Index Only Scan using order_items_2028_07_pkey on order_items_2028_07 b_7  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1450 read=503 written=2
+                                            ->  Index Only Scan using order_items_2028_08_pkey on order_items_2028_08 b_8  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1431 read=522
+                                            ->  Index Only Scan using order_items_2028_09_pkey on order_items_2028_09 b_9  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1452 read=501
+                                            ->  Index Only Scan using order_items_2028_10_pkey on order_items_2028_10 b_10  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1441 read=512
+                                            ->  Index Only Scan using order_items_2028_11_pkey on order_items_2028_11 b_11  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1451 read=502 written=1
+                                            ->  Index Only Scan using order_items_2028_12_pkey on order_items_2028_12 b_12  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1451 read=503
+                                            ->  Index Only Scan using order_items_2029_01_pkey on order_items_2029_01 b_13  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1431 read=522
+                                            ->  Index Only Scan using order_items_2029_02_pkey on order_items_2029_02 b_14  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1453 read=500
+                                            ->  Index Only Scan using order_items_2029_03_pkey on order_items_2029_03 b_15  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1445 read=508
+                                            ->  Index Only Scan using order_items_2029_04_pkey on order_items_2029_04 b_16  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1457 read=496
+                                            ->  Index Only Scan using order_items_2029_05_pkey on order_items_2029_05 b_17  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1439 read=514
+                                            ->  Index Only Scan using order_items_2029_06_pkey on order_items_2029_06 b_18  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1455 read=498 written=1
+                                            ->  Index Only Scan using order_items_2029_07_pkey on order_items_2029_07 b_19  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1452 read=501 written=1
+                                            ->  Index Only Scan using order_items_2029_08_pkey on order_items_2029_08 b_20  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1449 read=504 written=1
+                                            ->  Index Only Scan using order_items_2029_09_pkey on order_items_2029_09 b_21  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1452 read=501
+                                            ->  Index Only Scan using order_items_2029_10_pkey on order_items_2029_10 b_22  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1442 read=512
+                                            ->  Index Only Scan using order_items_2029_11_pkey on order_items_2029_11 b_23  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1453 read=501
+                                            ->  Index Only Scan using order_items_2029_12_pkey on order_items_2029_12 b_24  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1439 read=514
+                                            ->  Index Only Scan using order_items_2030_01_pkey on order_items_2030_01 b_25  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1429 read=524
+                                            ->  Index Only Scan using order_items_2030_02_pkey on order_items_2030_02 b_26  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1429 read=524 written=1
+                                            ->  Index Only Scan using order_items_2030_03_pkey on order_items_2030_03 b_27  (cost=0.42..4.00 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1469 read=484
+                                            ->  Index Only Scan using order_items_2030_04_pkey on order_items_2030_04 b_28  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1449 read=505
+                                            ->  Index Only Scan using order_items_2030_05_pkey on order_items_2030_05 b_29  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1444 read=509 written=1
+                                            ->  Index Only Scan using order_items_2030_06_pkey on order_items_2030_06 b_30  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1451 read=502
+                                            ->  Index Only Scan using order_items_2030_07_pkey on order_items_2030_07 b_31  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1431 read=522
+                                            ->  Index Only Scan using order_items_2030_08_pkey on order_items_2030_08 b_32  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1448 read=505
+                                            ->  Index Only Scan using order_items_2030_09_pkey on order_items_2030_09 b_33  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1440 read=513
+                                            ->  Index Only Scan using order_items_2030_10_pkey on order_items_2030_10 b_34  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1440 read=513
+                                            ->  Index Only Scan using order_items_2030_11_pkey on order_items_2030_11 b_35  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1433 read=521
+                                            ->  Index Only Scan using order_items_2030_12_pkey on order_items_2030_12 b_36  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1447 read=506
+Planning:
+  Buffers: shared hit=2150 read=25
+Planning Time: 3.392 ms
+Execution Time: 27.316 ms
+=== R12 run 3 ===
+Limit  (cost=137383.32..137383.35 rows=10 width=12) (actual time=25.846..26.690 rows=10 loops=1)
+  Buffers: shared hit=52014 read=19094 written=7
+  ->  Sort  (cost=137383.32..137383.82 rows=200 width=12) (actual time=25.845..26.689 rows=10 loops=1)
+        Sort Key: (count(*)) DESC
+        Sort Method: top-N heapsort  Memory: 25kB
+        Buffers: shared hit=52014 read=19094 written=7
+        ->  Finalize GroupAggregate  (cost=137328.33..137379.00 rows=200 width=12) (actual time=25.393..26.588 rows=2510 loops=1)
+              Group Key: b.product_id
+              Buffers: shared hit=52011 read=19094 written=7
+              ->  Gather Merge  (cost=137328.33..137375.00 rows=400 width=12) (actual time=25.391..26.392 rows=2630 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=52011 read=19094 written=7
+                    ->  Sort  (cost=136328.31..136328.81 rows=200 width=12) (actual time=22.576..22.601 rows=877 loops=3)
+                          Sort Key: b.product_id
+                          Sort Method: quicksort  Memory: 62kB
+                          Buffers: shared hit=52011 read=19094 written=7
+                          Worker 0:  Sort Method: quicksort  Memory: 58kB
+                          Worker 1:  Sort Method: quicksort  Memory: 57kB
+                          ->  Partial HashAggregate  (cost=136318.66..136320.66 rows=200 width=12) (actual time=22.457..22.509 rows=877 loops=3)
+                                Group Key: b.product_id
+                                Batches: 1  Memory Usage: 145kB
+                                Buffers: shared hit=51997 read=19094 written=7
+                                Worker 0:  Batches: 1  Memory Usage: 145kB
+                                Worker 1:  Batches: 1  Memory Usage: 121kB
+                                ->  Nested Loop  (cost=5.00..44244.67 rows=18414799 width=4) (actual time=0.274..22.320 rows=897 loops=3)
+                                      Buffers: shared hit=51997 read=19094 written=7
+                                      ->  Parallel Append  (cost=4.58..2641.87 rows=284 width=8) (actual time=0.034..0.864 rows=217 loops=3)
+                                            Buffers: shared hit=40 read=737 written=1
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_05 a_17  (cost=4.58..79.82 rows=12 width=8) (actual time=0.040..0.084 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_05_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.034..0.034 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_01 a_13  (cost=4.58..79.82 rows=12 width=8) (actual time=0.042..0.101 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=25
+                                                  ->  Bitmap Index Scan on order_items_2029_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.034..0.034 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_03 a_3  (cost=4.58..79.82 rows=12 width=8) (actual time=0.035..0.081 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_03_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.029..0.029 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_01 a_1  (cost=4.58..79.82 rows=12 width=8) (actual time=0.037..0.093 rows=23 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_01_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.032..0.032 rows=23 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_08 a_8  (cost=4.58..79.82 rows=12 width=8) (actual time=0.035..0.080 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=21
+                                                  ->  Bitmap Index Scan on order_items_2028_08_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.030..0.030 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_10 a_22  (cost=4.58..79.82 rows=12 width=8) (actual time=0.035..0.088 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=24
+                                                  ->  Bitmap Index Scan on order_items_2029_10_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.029..0.029 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_07 a_31  (cost=4.58..79.82 rows=12 width=8) (actual time=0.036..0.093 rows=24 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=26
+                                                  ->  Bitmap Index Scan on order_items_2030_07_product_id_idx  (cost=0.00..4.57 rows=20 width=0) (actual time=0.029..0.029 rows=24 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_03 a_27  (cost=4.56..72.31 rows=11 width=8) (actual time=0.034..0.072 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_07 a_19  (cost=4.56..72.31 rows=11 width=8) (actual time=0.035..0.071 rows=15 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=17
+                                                  ->  Bitmap Index Scan on order_items_2029_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=15 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_12 a_24  (cost=4.56..72.31 rows=11 width=8) (actual time=0.033..0.082 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=22
+                                                  ->  Bitmap Index Scan on order_items_2029_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.027..0.027 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_01 a_25  (cost=4.56..72.31 rows=11 width=8) (actual time=0.034..0.081 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=23
+                                                  ->  Bitmap Index Scan on order_items_2030_01_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_09 a_33  (cost=4.56..72.31 rows=11 width=8) (actual time=0.034..0.060 rows=13 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=15
+                                                  ->  Bitmap Index Scan on order_items_2030_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.027..0.027 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_04 a_4  (cost=4.56..72.30 rows=11 width=8) (actual time=0.036..0.071 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=18
+                                                  ->  Bitmap Index Scan on order_items_2028_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.030..0.030 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_12 a_12  (cost=4.56..72.30 rows=11 width=8) (actual time=0.033..0.078 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=2 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.028..0.028 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_08 a_20  (cost=4.56..72.30 rows=11 width=8) (actual time=0.032..0.115 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=21 written=1
+                                                  ->  Bitmap Index Scan on order_items_2029_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.027..0.027 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_06 a_6  (cost=4.56..72.30 rows=11 width=8) (actual time=0.034..0.077 rows=19 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared hit=1 read=22
+                                                  ->  Bitmap Index Scan on order_items_2028_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.028..0.028 rows=19 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared hit=1 read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_04 a_28  (cost=4.56..72.30 rows=11 width=8) (actual time=0.034..0.070 rows=16 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_10 a_34  (cost=4.56..72.30 rows=11 width=8) (actual time=0.037..0.080 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2030_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.031..0.031 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_10 a_10  (cost=4.56..72.30 rows=11 width=8) (actual time=0.034..0.076 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=25
+                                                  ->  Bitmap Index Scan on order_items_2028_10_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_04 a_16  (cost=4.56..72.30 rows=11 width=8) (actual time=0.033..0.072 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Buffers: shared read=21
+                                                  ->  Bitmap Index Scan on order_items_2029_04_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.029..0.029 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_11 a_23  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.024 rows=5 loops=3)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=1
+                                                  Buffers: shared read=20
+                                                  ->  Bitmap Index Scan on order_items_2029_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.033..0.033 rows=16 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_11 a_35  (cost=4.56..72.30 rows=11 width=8) (actual time=0.032..0.045 rows=6 loops=2)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=6
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2030_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.048..0.048 rows=13 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=4
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_06 a_30  (cost=4.56..72.30 rows=11 width=8) (actual time=0.023..0.051 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2030_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.013..0.013 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_05 a_5  (cost=4.56..72.30 rows=11 width=8) (actual time=0.014..0.043 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared read=17
+                                                  ->  Bitmap Index Scan on order_items_2028_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.009..0.009 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_11 a_11  (cost=4.56..72.30 rows=11 width=8) (actual time=0.012..0.048 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_11_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.008..0.008 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_06 a_18  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.043 rows=11 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=11
+                                                  Buffers: shared read=14
+                                                  ->  Bitmap Index Scan on order_items_2029_06_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.012..0.012 rows=11 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_09 a_21  (cost=4.56..72.30 rows=11 width=8) (actual time=0.016..0.050 rows=14 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=14
+                                                  Buffers: shared hit=1 read=16
+                                                  ->  Bitmap Index Scan on order_items_2029_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=14 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_07 a_7  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.066 rows=22 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=22
+                                                  Buffers: shared hit=1 read=24
+                                                  ->  Bitmap Index Scan on order_items_2028_07_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=22 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_09 a_9  (cost=4.56..72.30 rows=11 width=8) (actual time=0.016..0.061 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2028_09_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_02 a_26  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.056 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2030_02_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_03 a_15  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.053 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2029_03_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_05 a_29  (cost=4.56..72.30 rows=11 width=8) (actual time=0.016..0.066 rows=21 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=21
+                                                  Buffers: shared hit=1 read=23
+                                                  ->  Bitmap Index Scan on order_items_2030_05_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=21 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_12 a_36  (cost=4.56..72.30 rows=11 width=8) (actual time=0.017..0.068 rows=20 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=20
+                                                  Buffers: shared hit=1 read=22
+                                                  ->  Bitmap Index Scan on order_items_2030_12_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.011..0.011 rows=20 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2030_08 a_32  (cost=4.56..72.30 rows=11 width=8) (actual time=0.015..0.060 rows=18 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=18
+                                                  Buffers: shared hit=1 read=20
+                                                  ->  Bitmap Index Scan on order_items_2030_08_product_id_idx  (cost=0.00..4.56 rows=18 width=0) (actual time=0.010..0.010 rows=18 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2028_02 a_2  (cost=4.55..64.79 rows=9 width=8) (actual time=0.013..0.050 rows=17 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=17
+                                                  Buffers: shared hit=1 read=19
+                                                  ->  Bitmap Index Scan on order_items_2028_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.009..0.009 rows=17 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                            ->  Parallel Bitmap Heap Scan on order_items_2029_02 a_14  (cost=4.55..64.78 rows=9 width=8) (actual time=0.019..0.038 rows=9 loops=1)
+                                                  Recheck Cond: (product_id = 1236)
+                                                  Heap Blocks: exact=8
+                                                  Buffers: shared hit=1 read=10
+                                                  ->  Bitmap Index Scan on order_items_2029_02_product_id_idx  (cost=0.00..4.54 rows=16 width=0) (actual time=0.014..0.014 rows=9 loops=1)
+                                                        Index Cond: (product_id = 1236)
+                                                        Buffers: shared read=3
+                                      ->  Append  (cost=0.42..144.69 rows=180 width=8) (actual time=0.050..0.098 rows=4 loops=650)
+                                            Buffers: shared hit=51957 read=18357 written=6
+                                            ->  Index Only Scan using order_items_2028_01_pkey on order_items_2028_01 b_1  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1436 read=517
+                                            ->  Index Only Scan using order_items_2028_02_pkey on order_items_2028_02 b_2  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1456 read=497
+                                            ->  Index Only Scan using order_items_2028_03_pkey on order_items_2028_03 b_3  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1416 read=537
+                                            ->  Index Only Scan using order_items_2028_04_pkey on order_items_2028_04 b_4  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1446 read=508
+                                            ->  Index Only Scan using order_items_2028_05_pkey on order_items_2028_05 b_5  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1461 read=492
+                                            ->  Index Only Scan using order_items_2028_06_pkey on order_items_2028_06 b_6  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1447 read=506 written=1
+                                            ->  Index Only Scan using order_items_2028_07_pkey on order_items_2028_07 b_7  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1444 read=509
+                                            ->  Index Only Scan using order_items_2028_08_pkey on order_items_2028_08 b_8  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1441 read=512 written=1
+                                            ->  Index Only Scan using order_items_2028_09_pkey on order_items_2028_09 b_9  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1447 read=506
+                                            ->  Index Only Scan using order_items_2028_10_pkey on order_items_2028_10 b_10  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1445 read=508
+                                            ->  Index Only Scan using order_items_2028_11_pkey on order_items_2028_11 b_11  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1446 read=507
+                                            ->  Index Only Scan using order_items_2028_12_pkey on order_items_2028_12 b_12  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1444 read=510
+                                            ->  Index Only Scan using order_items_2029_01_pkey on order_items_2029_01 b_13  (cost=0.42..4.04 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1426 read=527
+                                            ->  Index Only Scan using order_items_2029_02_pkey on order_items_2029_02 b_14  (cost=0.42..3.94 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1455 read=498
+                                            ->  Index Only Scan using order_items_2029_03_pkey on order_items_2029_03 b_15  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1442 read=511
+                                            ->  Index Only Scan using order_items_2029_04_pkey on order_items_2029_04 b_16  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1455 read=498
+                                            ->  Index Only Scan using order_items_2029_05_pkey on order_items_2029_05 b_17  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1440 read=513
+                                            ->  Index Only Scan using order_items_2029_06_pkey on order_items_2029_06 b_18  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1450 read=503
+                                            ->  Index Only Scan using order_items_2029_07_pkey on order_items_2029_07 b_19  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1449 read=504
+                                            ->  Index Only Scan using order_items_2029_08_pkey on order_items_2029_08 b_20  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1447 read=506
+                                            ->  Index Only Scan using order_items_2029_09_pkey on order_items_2029_09 b_21  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1457 read=496
+                                            ->  Index Only Scan using order_items_2029_10_pkey on order_items_2029_10 b_22  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1437 read=517 written=1
+                                            ->  Index Only Scan using order_items_2029_11_pkey on order_items_2029_11 b_23  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1451 read=503 written=2
+                                            ->  Index Only Scan using order_items_2029_12_pkey on order_items_2029_12 b_24  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1439 read=514
+                                            ->  Index Only Scan using order_items_2030_01_pkey on order_items_2030_01 b_25  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1433 read=520 written=1
+                                            ->  Index Only Scan using order_items_2030_02_pkey on order_items_2030_02 b_26  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1424 read=529
+                                            ->  Index Only Scan using order_items_2030_03_pkey on order_items_2030_03 b_27  (cost=0.42..4.00 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1458 read=495
+                                            ->  Index Only Scan using order_items_2030_04_pkey on order_items_2030_04 b_28  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1445 read=509
+                                            ->  Index Only Scan using order_items_2030_05_pkey on order_items_2030_05 b_29  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1441 read=512
+                                            ->  Index Only Scan using order_items_2030_06_pkey on order_items_2030_06 b_30  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1453 read=500
+                                            ->  Index Only Scan using order_items_2030_07_pkey on order_items_2030_07 b_31  (cost=0.42..4.03 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1426 read=527
+                                            ->  Index Only Scan using order_items_2030_08_pkey on order_items_2030_08 b_32  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1446 read=507
+                                            ->  Index Only Scan using order_items_2030_09_pkey on order_items_2030_09 b_33  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1439 read=514
+                                            ->  Index Only Scan using order_items_2030_10_pkey on order_items_2030_10 b_34  (cost=0.42..3.98 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1446 read=507
+                                            ->  Index Only Scan using order_items_2030_11_pkey on order_items_2030_11 b_35  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1425 read=529
+                                            ->  Index Only Scan using order_items_2030_12_pkey on order_items_2030_12 b_36  (cost=0.42..3.99 rows=5 width=8) (actual time=0.003..0.003 rows=0 loops=650)
+                                                  Index Cond: (order_id = a.order_id)
+                                                  Filter: (product_id <> a.product_id)
+                                                  Rows Removed by Filter: 0
+                                                  Heap Fetches: 0
+                                                  Buffers: shared hit=1444 read=509
+Planning:
+  Buffers: shared hit=2134 read=41
+Planning Time: 3.452 ms
+Execution Time: 26.918 ms

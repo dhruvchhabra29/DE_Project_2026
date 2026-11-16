@@ -1,0 +1,60 @@
+=== R24 run 1 ===
+Sort  (cost=8.05..8.06 rows=1 width=20) (actual time=0.026..0.026 rows=0 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=6 read=3
+  ->  GroupAggregate  (cost=8.02..8.04 rows=1 width=20) (actual time=0.012..0.012 rows=0 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=3 read=3
+        ->  Sort  (cost=8.02..8.02 rows=1 width=8) (actual time=0.012..0.012 rows=0 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=3 read=3
+              ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.01 rows=1 width=8) (actual time=0.008..0.008 rows=0 loops=1)
+                    Index Cond: (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                    Filter: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text))
+                    Buffers: shared read=3
+Planning:
+  Buffers: shared hit=155 read=4
+Planning Time: 0.234 ms
+Execution Time: 0.045 ms
+=== R24 run 2 ===
+Sort  (cost=8.05..8.06 rows=1 width=20) (actual time=0.015..0.016 rows=0 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=9
+  ->  GroupAggregate  (cost=8.02..8.04 rows=1 width=20) (actual time=0.008..0.008 rows=0 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=6
+        ->  Sort  (cost=8.02..8.02 rows=1 width=8) (actual time=0.008..0.008 rows=0 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6
+              ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.01 rows=1 width=8) (actual time=0.004..0.004 rows=0 loops=1)
+                    Index Cond: (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                    Filter: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text))
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=159
+Planning Time: 0.201 ms
+Execution Time: 0.036 ms
+=== R24 run 3 ===
+Sort  (cost=8.05..8.06 rows=1 width=20) (actual time=0.016..0.017 rows=0 loops=1)
+  Sort Key: (sum(quantity)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=9
+  ->  GroupAggregate  (cost=8.02..8.04 rows=1 width=20) (actual time=0.008..0.009 rows=0 loops=1)
+        Group Key: product_id
+        Buffers: shared hit=6
+        ->  Sort  (cost=8.02..8.02 rows=1 width=8) (actual time=0.008..0.008 rows=0 loops=1)
+              Sort Key: product_id
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=6
+              ->  Index Scan using idx_movements_moved_at on inventory_movements m  (cost=0.43..8.01 rows=1 width=8) (actual time=0.004..0.004 rows=0 loops=1)
+                    Index Cond: (moved_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                    Filter: ((store_id = 43) AND ((movement_type)::text = 'RESTOCK'::text))
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=159
+Planning Time: 0.196 ms
+Execution Time: 0.035 ms

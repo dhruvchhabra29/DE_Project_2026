@@ -1,0 +1,75 @@
+=== R15 run 1 ===
+GroupAggregate  (cost=674.28..12878.53 rows=2375 width=44) (actual time=20.969..20.970 rows=0 loops=1)
+  Group Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+  Buffers: shared hit=19795 read=493
+  ->  Incremental Sort  (cost=674.28..12831.03 rows=2375 width=36) (actual time=20.968..20.969 rows=0 loops=1)
+        Sort Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+        Presorted Key: o.store_id
+        Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
+        Buffers: shared hit=19795 read=493
+        ->  Nested Loop  (cost=0.57..12718.24 rows=2375 width=36) (actual time=20.958..20.958 rows=0 loops=1)
+              Buffers: shared hit=19789 read=493
+              ->  Index Scan using dark_stores_pkey on dark_stores s  (cost=0.14..15.24 rows=19 width=4) (actual time=0.002..0.008 rows=19 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 101
+                    Buffers: shared hit=3
+              ->  Index Only Scan using idx_orders_store_status_placed on orders o  (cost=0.43..667.00 rows=127 width=12) (actual time=1.102..1.102 rows=0 loops=19)
+                    Index Cond: (store_id = s.store_id)
+                    Filter: (date(placed_at) = '2026-06-29'::date)
+                    Rows Removed by Filter: 25286
+                    Heap Fetches: 0
+                    Buffers: shared hit=19786 read=493
+Planning:
+  Buffers: shared hit=285 read=11
+Planning Time: 0.443 ms
+Execution Time: 20.995 ms
+=== R15 run 2 ===
+GroupAggregate  (cost=674.28..12878.53 rows=2375 width=44) (actual time=20.913..20.914 rows=0 loops=1)
+  Group Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+  Buffers: shared hit=20288
+  ->  Incremental Sort  (cost=674.28..12831.03 rows=2375 width=36) (actual time=20.913..20.913 rows=0 loops=1)
+        Sort Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+        Presorted Key: o.store_id
+        Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
+        Buffers: shared hit=20288
+        ->  Nested Loop  (cost=0.57..12718.24 rows=2375 width=36) (actual time=20.903..20.903 rows=0 loops=1)
+              Buffers: shared hit=20282
+              ->  Index Scan using dark_stores_pkey on dark_stores s  (cost=0.14..15.24 rows=19 width=4) (actual time=0.002..0.008 rows=19 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 101
+                    Buffers: shared hit=3
+              ->  Index Only Scan using idx_orders_store_status_placed on orders o  (cost=0.43..667.00 rows=127 width=12) (actual time=1.100..1.100 rows=0 loops=19)
+                    Index Cond: (store_id = s.store_id)
+                    Filter: (date(placed_at) = '2026-06-29'::date)
+                    Rows Removed by Filter: 25286
+                    Heap Fetches: 0
+                    Buffers: shared hit=20279
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.408 ms
+Execution Time: 20.939 ms
+=== R15 run 3 ===
+GroupAggregate  (cost=674.28..12878.53 rows=2375 width=44) (actual time=20.373..20.374 rows=0 loops=1)
+  Group Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+  Buffers: shared hit=20288
+  ->  Incremental Sort  (cost=674.28..12831.03 rows=2375 width=36) (actual time=20.372..20.373 rows=0 loops=1)
+        Sort Key: o.store_id, (EXTRACT(hour FROM o.placed_at))
+        Presorted Key: o.store_id
+        Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
+        Buffers: shared hit=20288
+        ->  Nested Loop  (cost=0.57..12718.24 rows=2375 width=36) (actual time=20.363..20.363 rows=0 loops=1)
+              Buffers: shared hit=20282
+              ->  Index Scan using dark_stores_pkey on dark_stores s  (cost=0.14..15.24 rows=19 width=4) (actual time=0.001..0.008 rows=19 loops=1)
+                    Filter: (city_id = 1)
+                    Rows Removed by Filter: 101
+                    Buffers: shared hit=3
+              ->  Index Only Scan using idx_orders_store_status_placed on orders o  (cost=0.43..667.00 rows=127 width=12) (actual time=1.071..1.071 rows=0 loops=19)
+                    Index Cond: (store_id = s.store_id)
+                    Filter: (date(placed_at) = '2026-06-29'::date)
+                    Rows Removed by Filter: 25286
+                    Heap Fetches: 0
+                    Buffers: shared hit=20279
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.391 ms
+Execution Time: 20.398 ms
