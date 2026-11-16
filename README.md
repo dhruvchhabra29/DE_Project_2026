@@ -22,12 +22,13 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| To confirm | Mudit Agrawal | 2501010283 | muditagrawal2007 |
-| To confirm | Dhruv Chhabra | 2501010143 | dhruvchhabra29 |
-| To confirm | Shweta Sharma | 2501010448 | Shweta-Sharma-sh |
-| To confirm | Krishna Agarwal | 2501010231 | anhsirkkrishna |
+| Team Member | Mudit Agrawal | 2501010283 | muditagrawal2007 |
+| Team Member | Dhruv Chhabra | 2501010143 | dhruvchhabra29 |
+| Team Member | Shweta Sharma | 2501010448 | Shweta-Sharma-sh |
+| Team Member | Krishna Agarwal | 2501010231 | anhsirkkrishna |
+*No Team Lead in our project everyone do their task as a team lead, can't define a single name.
 
-**Team No.:** T0033 · **Section:** To confirm · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
+**Team No.:** T0033 · **Section:** E · **Repository URL:** https://github.com/dhruvchhabra29/DE_Project_2026
 
 **Database:** PostgreSQL 17.10 · **Benchmark laptop:** MacBook Pro M4
 
